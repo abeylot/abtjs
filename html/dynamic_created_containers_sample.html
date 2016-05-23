@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link href="../css/base.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+	<script type="text/javascript" src="../js/base.js"></script>
+	<script>
+	var a = new rootContainer("VERTICAL",0,0,1,1,4 );
+	var b = new finalContainer("HORIZONTAL",100,100,0,0,1 );
+	var c = new finalContainer("HORIZONTAL",100,100,1,1,2 );
+
+	b.view.style.backgroundColor='blue';
+	c.view.style.backgroundColor='green';
+	a.appendChild(b);
+	a.appendChild(c);
+	</script>
+</body>
+</html>

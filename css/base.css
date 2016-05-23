@@ -1,0 +1,45 @@
+		body
+		{
+			border: 0px;
+			margin:0px;
+			padding:0px;
+			overflow:hidden;
+		}
+		.container
+		{
+			/*border: 1px solid red;*/
+			/*border: 0px;*/
+			margin:0px;
+			padding:0px;
+			overflow:auto;
+			position:absolute
+		}
+		
+		.horizontal div
+		{
+			top:0px
+			/*overflow:hidden*/
+			/*flex-flow:column nowrap;*/
+		}
+		
+		.vertical div
+		{
+			left:0px;
+			/*flex-flow:row nowrap;*/
+		}
+
+		.final
+		{
+			#background-color:green;
+			overflow:auto;
+			/*overflow:hidden*/;
+			width:100%;
+			height:100%;
+		}
+		.htmlContainer
+		{
+			background-color:#FFFFFF;
+			overflow:auto;
+			width:100%;
+			height:100%;
+		}
