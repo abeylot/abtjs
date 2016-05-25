@@ -20,7 +20,7 @@ function parseTabSet(parent, child)
 		tabNames = child.getAttribute("data-tabNames");
 	}
 	myTabSet.setTabNames(tabNames.split('|'));
-	myTabSet.attachToContainer(parent.view);	
+	myTabSet.attachToContainer(parent);	
 	return myTabSet;
 }
 

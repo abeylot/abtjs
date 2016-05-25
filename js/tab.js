@@ -17,26 +17,24 @@ function tabSet()
 	}
 
 
-	this.attachToContainer = function(containerName)
+	this.attachToContainer = function(container)
 	{
-		var container = null
-		container = containerName;
-		container.appendChild(this.buildMe());
+		this.view = this.buildMe();
 		this.view.innerHTML =this.buildHTML();
+		container.appendChild(this);
 		this.divs = this.view.getElementsByTagName('DIV');
-		//alert(this.divs.length);
 		this.registerEvents();
-		container.addEventListener('containerResize', this.onResize.bind(this));
+		//container.addEventListener('containerResize', this.onResize.bind(this));
 	}
 	
 
 	//*
 	//* delete self from document
 	//*
-	this.destroy = function()
-	{
-		this.parent.removeChild(this);
-	}
+	//this.destroy = function()
+	//{
+	//	this.parent.removeChild(this);
+	//}
 	
 	this.getTabAt = function(index)
 	{
@@ -115,7 +113,7 @@ function tabSet()
 				i++;
 			}
 		}
-		this.onResize();
+		this.resize();
 	}
 	
 	this.buildHTML = function()
@@ -162,8 +160,7 @@ function tabSet()
 
 	}
 	
-	this.onResize = function(){
-		//alert('resize!');
+	this.resize = function(){
 		if(this.currentTab != null)
 		{
 			var h = 0;
@@ -174,9 +171,6 @@ function tabSet()
 					h = parseInt(getComputedStyle(this.divs[j]).height);
 				}
 			}
-			//var curStyle=getComputedStyle(this.currentTab); 
-			//h += parseInt(curStyle.paddingTop);
-			//h += parseInt(curStyle.paddingBottom);
 			var style=getComputedStyle(this.view.parentElement); 
 			var myStyle=getComputedStyle(this.view); 
 			var deltax = getBorderSize(this,"left") + getBorderSize(this,"right");   
@@ -186,17 +180,9 @@ function tabSet()
 			this.view.style.height = parseInt(style.height) - deltay+'px';
 
 			this.currentTab.style.height = parseInt(getComputedStyle(this.view).height) - h + 'px';
-			//alert(h);
 			itemDispatchEvent(this.currentTab,"containerResize");
 		}
 	}
-
-	
-	//******************
-	//* COMPONENT INIT *
-	//******************
-
 }
 
-//tabSet.prototype = new baseWidget;
 

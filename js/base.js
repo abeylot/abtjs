@@ -17,7 +17,6 @@ function getBorderSize(obj,dir)
 {
 	if(obj == null) return 0;
 	var st = window.getComputedStyle(obj.view);
-	//if(obj.view.id == "middle") alert (parseInt(st.paddingTop) + parseInt(st.marginTop)  + parseInt(st.borderTopWidth));
 	if(dir=="top")
 	{
 		return parseInt(st.paddingTop) + parseInt(st.marginTop)  + parseInt(st.borderTopWidth);
@@ -272,11 +271,6 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 		var error = false;
 		for(var i=0; i < this.childrens.length; i++)
 			error = error || this.childrens[i].resize();
-		//if(error && !fixedP0)
-		//{
-			//alert("retry");
-			//this.computeChidrensSize(true);
-		//}
 	}
 	
 	//method to resize this container
