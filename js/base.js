@@ -13,6 +13,30 @@ function itemDispatchEvent(item,eventName,eventData)
 	item.dispatchEvent(evt);
 }
 
+function getBorderSize(obj,dir)
+{
+	if(obj == null) return 0;
+	var st = window.getComputedStyle(obj.view);
+	//if(obj.view.id == "middle") alert (parseInt(st.paddingTop) + parseInt(st.marginTop)  + parseInt(st.borderTopWidth));
+	if(dir=="top")
+	{
+		return parseInt(st.paddingTop) + parseInt(st.marginTop)  + parseInt(st.borderTopWidth);
+	}
+	if(dir=="bottom")
+	{
+		return parseInt(st.paddingBottom) + parseInt(st.marginBottom) + parseInt(st.borderBottomWidth);
+	}
+	if(dir=="left")
+	{
+		return parseInt(st.paddingLeft) + parseInt(st.marginLeft) + parseInt(st.borderLeftWidth);
+	}
+	if(dir=="right")
+	{
+		return parseInt(st.paddingRight) + parseInt(st.marginRight) + parseInt(st.borderRightWidth);
+	}
+	
+}
+
 // class container
 
 function container(disposition, minXSize, minYSize, elastX, elastY, priority )
@@ -151,12 +175,16 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 				{
 					if(this.disposition == "HORIZONTAL")
 					{
-						minSz += this.childrens[this.childrensTmp[i].index].minXSize;
+						var szx=0;
+						szx = this.childrens[this.childrensTmp[i].index].minXSize + getBorderSize(this.childrens[this.childrensTmp[i].index],"left") + getBorderSize(this.childrens[this.childrensTmp[i].index],"right") ;
+						minSz += szx;
 						elast += this.childrens[this.childrensTmp[i].index].elastX;
 					}
 					else
 					{
-						minSz += this.childrens[this.childrensTmp[i].index].minYSize;
+						var szy=0;
+						szy = this.childrens[this.childrensTmp[i].index].minYSize + getBorderSize(this.childrens[this.childrensTmp[i].index],"top") + getBorderSize(this.childrens[this.childrensTmp[i].index],"bottom") ;
+						minSz += szy;
 						elast += this.childrens[this.childrensTmp[i].index].elastY;
 					}
 					
@@ -166,17 +194,19 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 			if(minSz > size)
 			{
 				var done = false;
+				var somethingDone = false;
 				for(var i= this.childrensTmp.length -1 ; i >=0 ; i--)
 				{
-					if(this.childrensTmp[i].shown)
+					if((this.childrensTmp[i].shown)/*&&(this.childrensTmp[i].priority > 0)*/)
 					{
+						/*somethingDone = true;*/
 						this.childrensTmp[i].shown = false;
 						break;	
 					} 
 				}
 			}
 		}
-		while(minSz > size)
+		while((minSz > size)/*&&somethingDone*/)
 		
 		//
 		//	Dispatch remaining space
@@ -184,7 +214,9 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 		if(elast > 0)
 		{
 			delta = Math.floor((size - minSz)/elast);
+			if(delta < 0) delta = 0;
 			delta2  = (size - minSz) - delta*elast;
+			if(delta == 0) delta2 = 0;
 			for(var j=0; j < this.childrens.length; j++)
 			{
 				var i=0;
@@ -196,9 +228,12 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 				{
 					if(this.disposition == "HORIZONTAL")
 					{
+						//if(!(this.childrens[j].priority == 0)|| !(fixedP0) )
+						//{
+							if(this.childrens[j].flow) this.childrens[j].sizeY = -1;
+							else  this.childrens[j].sizeY = this.sizeY - (getBorderSize(this.childrens[j],"top") + getBorderSize(this.childrens[j],"bottom"));
+						//}
 						this.childrens[j].sizeX = this.childrens[j].minXSize;
-						if(this.childrens[j].flow) this.childrens[j].sizeY = -1;
-						else  this.childrens[j].sizeY = this.sizeY - 1;
 						if(this.childrens[j].elastX > 0)
 						{
 							this.childrens[j].sizeX += this.childrens[j].elastX*delta + delta2;
@@ -206,21 +241,25 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 							this.childrens[j].posy = 0;
 						}  
 						this.childrens[j].posx = pos;
-						pos+=this.childrens[j].sizeX;
+						pos+=this.childrens[j].sizeX + getBorderSize(this.childrens[j],"left") + getBorderSize(this.childrens[j],"right") ;
 					}
 					else
 					{
-						this.childrens[j].sizeY = this.childrens[j].minYSize;
+						//if(!(this.childrens[j].priority == 0)|| !(fixedP0) )
+						//{
+							this.childrens[j].sizeY = this.childrens[j].minYSize;
+						//}
 						if(this.childrens[j].flow) this.childrens[j].sizeX = -1;
-						else  this.childrens[j].sizeX = this.sizeX;
+						else  this.childrens[j].sizeX = this.sizeX - (getBorderSize(this.childrens[j],"left") + getBorderSize(this.childrens[j],"right"));
+							this.childrens[j].posx = 0;
 						if(this.childrens[j].elastY > 0)
 						{
 							this.childrens[j].sizeY += this.childrens[j].elastY*delta + delta2;
-							this.childrens[j].posx = 0;
 							delta2=0;
-						}  
+						}
 						this.childrens[j].posy = pos;
-						pos+=this.childrens[j].sizeY;
+						pos+=this.childrens[j].sizeY + getBorderSize(this.childrens[j],"top") + getBorderSize(this.childrens[j],"bottom") ;
+;
 					}
 					this.childrens[j].view.style.display="inline-block";
 				}
@@ -230,11 +269,20 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 				}
 			}
 		}
+		var error = false;
+		for(var i=0; i < this.childrens.length; i++)
+			error = error || this.childrens[i].resize();
+		//if(error && !fixedP0)
+		//{
+			//alert("retry");
+			//this.computeChidrensSize(true);
+		//}
 	}
 	
 	//method to resize this container
 	this.resize = function(x,y)
 	{
+		var error = false;
 		var x = typeof x !== 'undefined' ? x : null;
 		var y = typeof y !== 'undefined' ? y : null;
 		if(x!=null) this.sizeX=x;
@@ -242,19 +290,14 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 		
 		if(this.sizeX > 0)this.view.style.width = this.sizeX + "px";
 		if(this.sizeY > 0) this.view.style.height = this.sizeY + "px";
-		var deltax = this.view.offsetWidth - this.sizeX;  
-		var deltay = this.view.offsetHeight - this.sizeY;
-		
-		if(this.sizeX > 0) this.view.style.width = this.sizeX -deltax + "px";
-		if(this.sizeY > 0) this.view.style.height = this.sizeY -deltay + "px";
 			
-		this.view.style.left = this.posx+ "px";
-		this.view.style.top = this.posy+ "px";
+		this.view.style.left = this.posx + getBorderSize(this.parent,"left") + "px";
+		this.view.style.top = this.posy + getBorderSize(this.parent,"top") + "px";
 			
-		this.computeChidrensSize()
-		for(var i=0; i < this.childrens.length; i++)
-			this.childrens[i].resize();
+		this.computeChidrensSize(false)
+
 		itemDispatchEvent(this.view,"containerResize");
+		return error;
 	}
 
 
@@ -277,18 +320,18 @@ function rootContainer(disposition)
 	this.resize = function()
 	{
 		var style=getComputedStyle(this.view.parentElement);
-		this.view.style.height = (window.innerHeight - 20) + "px";
+		this.view.style.height = (window.innerHeight) + "px";
 		this.sizeY=window.innerHeight;
 		this.view.style.width = window.innerWidth + "px";
 		this.sizeX=window.innerWidth;
 
-		var deltax = this.view.offsetWidth - this.sizeX;  
+		/*var deltax = this.view.offsetWidth - this.sizeX;  
 		var deltay = this.view.offsetHeight - this.sizeY;
+		
 		this.view.style.width = this.sizeX -deltax + "px";
-		this.view.style.height = this.sizeY -deltay + "px";
-		this.computeChidrensSize();
-		for(var i=0; i < this.childrens.length; i++)
-			this.childrens[i].resize();
+		this.view.style.height = this.sizeY -deltay + "px";*/
+		
+		this.computeChidrensSize(false);
 	}
 
 	window.addEventListener('resize',this.resize.bind(this));
@@ -304,6 +347,8 @@ function finalContainer(disposition, minXSize, minYSize, elastX, elastY, priorit
 	container.call(this,disposition, minXSize, minYSize, elastX, elastY, priority);
 	this.view.className='container horizontal final';
 	this.flow=false;
+	this.view.style.overflow="hidden";
+	document.body.style.overflow="hidden"
 }
 
 

@@ -5,13 +5,31 @@
 // data-type to abtjs objects.
 //---
 
-
-// function parseObject
+// function parseContainer
 // parent : the abtjs parent container
-// child : the div to convert into abtjs object
+// child : the div to convert into abtjs tabSet
 // returns the new abtjs object
- 
-function parseObject(parent,child)
+
+
+function parseTabSet(parent, child)
+{	
+	var tabNames;
+	var myTabSet = new tabSet();
+	if(child.getAttribute("data-tabNames") != undefined)
+	{
+		tabNames = child.getAttribute("data-tabNames");
+	}
+	myTabSet.setTabNames(tabNames.split('|'));
+	myTabSet.attachToContainer(parent.view);	
+	return myTabSet;
+}
+
+// function parseContainer
+// parent : the abtjs parent container
+// child : the div to convert into abtjs container
+// returns the new abtjs object
+
+function parseContainer(parent, child)
 {
 	/* initialisations */
 	var disposition = "HORIZONTAL";
@@ -49,7 +67,7 @@ function parseObject(parent,child)
 	{
 		priority = Number(child.getAttribute("data-priority"));
 	}
-				
+			
 	/* build containers */
 
 	var newCont = null;
@@ -68,19 +86,40 @@ function parseObject(parent,child)
 	}
 	if((newCont!=null)&&(parent != null))
 	{
-
-	for(var a in child.style)
-	{
-		newCont.view.style[a] = child.style[a];
-	}
-	//newCont.view.id = child.id;
-	if(objType == "finalContainer")
-	{
-		newCont.view.innerHTML = child.innerHTML;
-	}
+		for(var a in child.style)
+		{
+			newCont.view.style[a] = child.style[a];
+		}
+		newCont.view.id = child.id;
+		if(objType == "finalContainer")
+		{
+			newCont.view.innerHTML = child.innerHTML;
+		}
 		parent.appendChild(newCont);
 	}
 	return newCont;
+}
+
+// function parseObject
+// parent : the abtjs parent container
+// child : the div to convert into abtjs object
+// returns the new abtjs object
+ 
+function parseObject(parent,child)
+{
+
+	var objType =  child.getAttribute("data-type");
+	
+	if( (objType =="container") || (objType =="finalContainer") || (objType =="rootContainer") ) 
+	{
+		return parseContainer(parent, child);
+	}
+	else if (objType == "tabSet")
+	{
+		return parseTabSet(parent, child);
+	}
+	return null;
+
 }
 		
 // function parse
@@ -100,14 +139,15 @@ function parse(parent,child,hook)
 		{
 			parse(prt,obj,hook);
 		}
-	}  
-	prt.resize();
+	}
+	return prt;  
+	//prt.resize();
 }
 		
 
 // function onload
 // this is the main function to call it should be called on <body> onload event
-
+var root = null;
 function onLoad()
 {
 	var divs = document.body.getElementsByTagName('DIV');
@@ -121,7 +161,7 @@ function onLoad()
 	}
 	if(rootContainer != null)
 	{
-		parse(null,rootContainer,parseObject);
+		root = parse(null,rootContainer,parseObject);
 	}
 	rootContainer.remove();
 }
