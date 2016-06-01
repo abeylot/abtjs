@@ -15,8 +15,15 @@ function itemDispatchEvent(item,eventName,eventData)
 
 function getBorderSize(obj,dir)
 {
+		if(obj == null) return 0;
+		return getDirBorderSize(obj.view,dir);
+}
+
+
+function getDirBorderSize(obj,dir)
+{
 	if(obj == null) return 0;
-	var st = window.getComputedStyle(obj.view);
+	var st = window.getComputedStyle(obj);
 	if(dir=="top")
 	{
 		return parseInt(st.paddingTop) + parseInt(st.marginTop)  + parseInt(st.borderTopWidth);
@@ -35,6 +42,7 @@ function getBorderSize(obj,dir)
 	}
 	
 }
+
 
 // class container
 

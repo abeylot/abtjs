@@ -1,5 +1,16 @@
 function tabSet()
 {
+	this.isRoot=false;
+	this.flow=false;
+	this.sizeX=0;
+	this.sizeY=0;
+	this.minXSize = 0;
+	this.minYSize = 0;
+	this.elastX = 1;
+	this.elastY = 1;
+	this.priority = 0;
+	this.parent = null;
+
 	//******************
 	//* PUBLIC METHODS *
 	//******************
@@ -160,10 +171,14 @@ function tabSet()
 
 	}
 	
-	this.resize = function(){
+	this.resize = function(x,y){
 		if(this.currentTab != null)
 		{
 			var h = 0;
+			var x = typeof x !== 'undefined' ? x : null;
+			var y = typeof y !== 'undefined' ? y : null;
+			if(x!=null) this.sizeX=x;
+			if(y!=null) this.sizeY=y;
 			for(var j=0; j < this.divs.length; j++)
 			{
 				if(this.divs[j].className == 'tabHeader')
@@ -176,11 +191,25 @@ function tabSet()
 			var deltax = getBorderSize(this,"left") + getBorderSize(this,"right");   
 			var deltay = getBorderSize(this,"top") + getBorderSize(this,"bottom");
 
-			this.view.style.width = parseInt(style.width) - deltax+'px';
-			this.view.style.height = parseInt(style.height) - deltay+'px';
+			this.view.style.width = this.sizeX - deltax+'px';
+			this.view.style.height = this.sizeY - deltay+'px';
+			this.view.style.left = this.posx + getBorderSize(this.parent,"left") + "px";
+			this.view.style.top = this.posy + getBorderSize(this.parent,"top") + "px";
 
-			this.currentTab.style.height = parseInt(getComputedStyle(this.view).height) - h + 'px';
-			itemDispatchEvent(this.currentTab,"containerResize");
+			//alert(this.sizeY);
+
+			for( j=0; j < this.divs.length; j++)
+			{
+				//alert(this.divs[j].className);
+				if((this.divs[j].className == 'tabContent')||(this.divs[j].className == 'tabContentSel'))
+				{
+					//alert("rr" + this.sizeY - h  - deltay - getDirBorderSize(this.divs[j],"top") - getDirBorderSize(this.divs[j],"bottom") + 'px');
+					this.divs[j].style.width = this.sizeX - deltax  - getDirBorderSize(this.divs[j],"left") - getDirBorderSize(this.divs[j],"right") + "px";;
+					this.divs[j].style.height = this.sizeY - h  - deltay - getDirBorderSize(this.divs[j],"top") - getDirBorderSize(this.divs[j],"bottom") + 'px';
+				}
+			}
+
+
 		}
 	}
 }

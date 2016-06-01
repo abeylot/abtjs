@@ -21,6 +21,10 @@ function parseTabSet(parent, child)
 	}
 	myTabSet.setTabNames(tabNames.split('|'));
 	myTabSet.attachToContainer(parent);	
+	for(var a in child.style)
+	{
+		myTabSet.view.style[a] = child.style[a];
+	}
 	return myTabSet;
 }
 
