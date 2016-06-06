@@ -52,7 +52,7 @@ function tabSet()
 		var i=0;
 		for(var j=0; j < this.divs.length; j++)
 		{
-			if((this.divs[j].className == 'tabContent')||(this.divs[j].className == 'tabContentSel'))
+			if(this.divs[j].classList.contains('tabContent')||this.divs[j].classList.contains('tabContentSel'))
 			{
 				if( i == index )
 				{
@@ -95,15 +95,17 @@ function tabSet()
 		var i=0;
 		for(var j=0; j < this.divs.length; j++)
 		{
-			if((this.divs[j].className == 'tabHeaderCell')||(this.divs[j].className == 'tabHeaderCellSel'))
+			if(this.divs[j].classList.contains('tabHeaderCell')||this.divs[j].classList.contains('tabHeaderCellSel'))
 			{
 				if( i == index )
 				{
-					this.divs[j].className = 'tabHeaderCellSel';
+					this.divs[j].classList.remove('tabHeaderCell');
+					this.divs[j].classList.add('tabHeaderCellSel');
 					this.currentTab = this.divs[j]; 
 				}else
 				{
-					this.divs[j].className = 'tabHeaderCell';
+					this.divs[j].classList.add('tabHeaderCell');
+					this.divs[j].classList.remove('tabHeaderCellSel');
 				}
 				i++;
 			}
@@ -111,15 +113,17 @@ function tabSet()
 		i=0;
 		for(var j=0; j < this.divs.length; j++)
 		{
-			if((this.divs[j].className == 'tabContent')||(this.divs[j].className == 'tabContentSel'))
+			if(this.divs[j].classList.contains('tabContent')||this.divs[j].classList.contains('tabContentSel'))
 			{
 				if( i == index )
 				{
-					this.divs[j].className = 'tabContentSel';
+					this.divs[j].classList.add('tabContentSel');
+					this.divs[j].classList.remove('tabContent');
 					this.currentTab = this.divs[j]; 
 				}else
 				{
-					this.divs[j].className = 'tabContent';
+					this.divs[j].classList.add('tabContent');
+					this.divs[j].classList.remove('tabContentSel');
 				}
 				i++;
 			}
@@ -162,7 +166,7 @@ function tabSet()
 		var i = 0;
 		for(var j=0; j < this.divs.length; j++)
 		{
-			if((this.divs[j].className == 'tabHeaderCell')||(this.divs[j].className == 'tabHeaderCellSel'))
+			if(this.divs[j].classList.contains('tabHeaderCell')||this.divs[j].classList.contains('tabHeaderCellSel'))
 			{
 				this.divs[j].addEventListener('click', this.setCurrent.bind(this,i));
 				i++;
@@ -196,14 +200,10 @@ function tabSet()
 			this.view.style.left = this.posx + getBorderSize(this.parent,"left") + "px";
 			this.view.style.top = this.posy + getBorderSize(this.parent,"top") + "px";
 
-			//alert(this.sizeY);
-
 			for( j=0; j < this.divs.length; j++)
 			{
-				//alert(this.divs[j].className);
-				if((this.divs[j].className == 'tabContent')||(this.divs[j].className == 'tabContentSel'))
+				if(this.divs[j].classList.contains('tabContent')||this.divs[j].classList.contains('tabContentSel'))
 				{
-					//alert("rr" + this.sizeY - h  - deltay - getDirBorderSize(this.divs[j],"top") - getDirBorderSize(this.divs[j],"bottom") + 'px');
 					this.divs[j].style.width = this.sizeX - deltax  - getDirBorderSize(this.divs[j],"left") - getDirBorderSize(this.divs[j],"right") + "px";;
 					this.divs[j].style.height = this.sizeY - h  - deltay - getDirBorderSize(this.divs[j],"top") - getDirBorderSize(this.divs[j],"bottom") + 'px';
 				}

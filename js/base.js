@@ -327,11 +327,6 @@ function rootContainer(disposition)
 		this.view.style.width = window.innerWidth + "px";
 		this.sizeX=window.innerWidth;
 
-		/*var deltax = this.view.offsetWidth - this.sizeX;  
-		var deltay = this.view.offsetHeight - this.sizeY;
-		
-		this.view.style.width = this.sizeX -deltax + "px";
-		this.view.style.height = this.sizeY -deltay + "px";*/
 		
 		this.computeChidrensSize(false);
 	}

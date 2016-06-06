@@ -14,18 +14,45 @@
 function parseTabSet(parent, child)
 {	
 	var tabNames;
-	var myTabSet = new tabSet();
-	if(child.getAttribute("data-tabNames") != undefined)
+	var objType =  child.getAttribute("data-type");
+	if(objType == "tabSet")
 	{
-		tabNames = child.getAttribute("data-tabNames");
+		var myTabSet = new tabSet();
+		if(child.getAttribute("data-tabNames") != undefined)
+		{
+			tabNames = child.getAttribute("data-tabNames");
+		}
+		myTabSet.setTabNames(tabNames.split('|'));
+		myTabSet.attachToContainer(parent);	
+		for(var a in child.style)
+		{
+			myTabSet.view.style[a] = child.style[a];
+		}
+		return myTabSet;
 	}
-	myTabSet.setTabNames(tabNames.split('|'));
-	myTabSet.attachToContainer(parent);	
-	for(var a in child.style)
+	else if(objType == "tab")
 	{
-		myTabSet.view.style[a] = child.style[a];
+		var myParent = child.parentNode;
+		if(myParent != null)
+		{
+			var parChilds = myParent.children;
+			var rank = -1;
+			for(var i = 0; i < parChilds.length ; i++)
+			{
+				if(child  == parChilds[i])
+				{
+					rank = i;
+					break;
+				}
+			}
+			if(rank != -1)
+			{
+				alert(rank);
+				parent.setContent(rank,child.innerHTML);
+			}
+		}
+		return null;
 	}
-	return myTabSet;
 }
 
 // function parseContainer
@@ -118,7 +145,7 @@ function parseObject(parent,child)
 	{
 		return parseContainer(parent, child);
 	}
-	else if (objType == "tabSet")
+	else if (objType == "tabSet" || objType == "tab")
 	{
 		return parseTabSet(parent, child);
 	}
