@@ -310,6 +310,8 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 //inherits from container
 function rootContainer(disposition)
 {
+	this.oldX = 0;
+	this.oldY = 0;
 	container.call(this);
 	this.isRoot=true;
 	var disposition = typeof disposition !== 'undefined' ? disposition : "HORIZONTAL";
@@ -321,19 +323,27 @@ function rootContainer(disposition)
 	
 	this.resize = function()
 	{
-		var style=getComputedStyle(this.view.parentElement);
-		this.view.style.height = (window.innerHeight) + "px";
-		this.sizeY=window.innerHeight;
-		this.view.style.width = window.innerWidth + "px";
-		this.sizeX=window.innerWidth;
+		if((this.oldX == window.innerWidth) && (this.oldY == window.innerHeight))
+		{
+			this.resizing = false;
+			this.sizeX=window.innerWidth;
+			this.sizeY=window.innerHeight;
 
-		
-		this.computeChidrensSize(false);
+			var style=getComputedStyle(this.view.parentElement);
+			this.view.style.height = this.sizeY + "px";
+			this.view.style.width =  this.sizeX + "px";
+			this.computeChidrensSize(false);
+		}else{
+			clearTimeout(this.resizing);
+			this.resizing = setTimeout(this.resize.bind(this),500);
+			this.computeChidrensSize(false);
+		}
+		this.oldX = window.innerWidth;
+		this.oldY = window.innerHeight;
 	}
 
 	window.addEventListener('resize',this.resize.bind(this));
-
-	this.resize();	
+	this.resizing = setTimeout(this.resize.bind(this),500);
 }
 
 

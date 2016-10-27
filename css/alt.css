@@ -1,0 +1,17 @@
+.AltContent
+{
+	z-index:1;
+	display:none;
+	width:100%;
+	height:100%;
+}
+
+.AltContentSel
+{
+	padding:10px;
+	border-width: 0 1px 1px 1px;
+	border-style: solid solid solid solid;
+	border-color: #888888;
+}
+
+
