@@ -67,8 +67,17 @@ function parseAltSet(parent, child)
 		{
 			altLimits = child.getAttribute("data-altLimits");
 		}
+		if(child.getAttribute("data-altFunction") != undefined)
+		{
+			altLimits = child.getAttribute("data-altLimits");
+		}
 		myAltSet.setAltLimits(altLimits.split('|'));
 		myAltSet.attachToContainer(parent);	
+		if(child.getAttribute("data-altFunction") != undefined)
+		{
+			altFunction = Function('x','y',child.getAttribute("data-altFunction"));
+			myAltSet.chooserFunction = altFunction;
+		}
 		for(var a in child.style)
 		{
 			myAltSet.view.style[a] = child.style[a];
@@ -144,6 +153,8 @@ function parseContainer(parent, child)
 		priority = Number(child.getAttribute("data-priority"));
 	}
 			
+
+
 	/* build containers */
 
 	var newCont = null;
@@ -162,6 +173,26 @@ function parseContainer(parent, child)
 	}
 	if((newCont!=null)&&(parent != null))
 	{
+
+
+		if(child.getAttribute("data-xFunction") != undefined)
+		{
+			newCont.xFunction = Function('x','y',child.getAttribute("data-xFunction"));
+		}
+		if(child.getAttribute("data-xFunction") != undefined)
+		{
+			newCont.yFunction = Function('x','y',child.getAttribute("data-yFunction"));
+		}
+		if(child.getAttribute("data-elxFunction") != undefined)
+		{
+			newCont.elxFunction = Function('x','y',child.getAttribute("data-elxFunction"));
+		}
+			if(child.getAttribute("data-elyFunction") != undefined)
+		{
+			newCont.elyFunction = Function('x','y',child.getAttribute("data-elyFunction"));
+		}
+
+
 		for(var a in child.style)
 		{
 			newCont.view.style[a] = child.style[a];

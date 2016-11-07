@@ -139,11 +139,14 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 	//method to resize childrens
 	this.computeChidrensSize = function()
 	{
+		var xSize = parseInt(window.getComputedStyle(this.view).width);
+		var ySize = parseInt(window.getComputedStyle(this.view).height);
 		//fill childrensTmp array;
 		this.childrensTmp = [];
 		pos=0;
 		for (var i=0; i < this.childrens.length; i++)
 		{
+			var child = this.childrens[i];
 			var obj = {};
 			obj.index=i;
 			obj.xSz = 0;
@@ -151,6 +154,26 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 			obj.shown = true;
 			obj.priority = this.childrens[i].priority;
 			this.childrensTmp[i] = obj;
+
+			if(typeof child.xFunction === 'function')
+			{
+				child.minXSize = child.xFunction(xSize,ySize);
+			}
+
+			if(typeof child.yFunction === 'function')
+			{
+				child.minYSize = child.yFunction(xSize,ySize);
+			}
+
+			if(typeof child.elxFunction === 'function')
+			{
+				child.elastX = child.elxFunction(xSize,ySize);
+			}
+
+			if(typeof child.elyFunction === 'function')
+			{
+				child.elastY = child.elyFunction(xSize,ySize);
+			}
 		}
 		this.childrensTmp.sort(function(a,b){return (a.priority - b.priority)});
 		//compute minimum size
@@ -220,9 +243,9 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 		//
 		if(elast > 0)
 		{
-			delta = Math.floor((size - minSz)/elast);
+			delta = (size - minSz)/elast;
 			if(delta < 0) delta = 0;
-			delta2  = (size - minSz) - delta*elast;
+			delta2  = size;
 			if(delta == 0) delta2 = 0;
 			for(var j=0; j < this.childrens.length; j++)
 			{
@@ -243,8 +266,13 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 						this.childrens[j].sizeX = this.childrens[j].minXSize;
 						if(this.childrens[j].elastX > 0)
 						{
-							this.childrens[j].sizeX += this.childrens[j].elastX*delta + delta2;
-							delta2=0;
+							this.childrens[j].sizeX += Math.floor(this.childrens[j].elastX*delta);
+							if(delta2 > 0) delta2 -= Math.floor(this.childrens[j].elastX*delta);
+							if(i == this.childrensTmp.length)
+							{
+								this.childrens[j].sizeX += delta2;
+								delta2 = 0;
+							} 
 							this.childrens[j].posy = 0;
 						}  
 						this.childrens[j].posx = pos;
@@ -261,8 +289,13 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 							this.childrens[j].posx = 0;
 						if(this.childrens[j].elastY > 0)
 						{
-							this.childrens[j].sizeY += this.childrens[j].elastY*delta + delta2;
-							delta2=0;
+							this.childrens[j].sizeY += Math.floor(this.childrens[j].elastY*delta);
+							if(delta2 > 0) delta2 -= Math.floor(this.childrens[j].elastY*delta);
+							if(i == this.childrensTmp.length)
+							{
+								this.childrens[j].sizeY += delta2;
+								delta2 = 0;
+							} 
 						}
 						this.childrens[j].posy = pos;
 						pos+=this.childrens[j].sizeY + getBorderSize(this.childrens[j],"top") + getBorderSize(this.childrens[j],"bottom") ;
