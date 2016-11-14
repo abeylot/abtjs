@@ -47,7 +47,61 @@ function parseTabSet(parent, child)
 			}
 			if(rank != -1)
 			{
-				alert(rank);
+				//alert(rank);
+				parent.setContent(rank,child.innerHTML);
+			}
+		}
+		return null;
+	}
+}
+
+
+function parseAltSet(parent, child)
+{	
+	var altLimits;
+	var objType =  child.getAttribute("data-type");
+	if(objType == "altSet")
+	{
+		var myAltSet = new alternative();
+		if(child.getAttribute("data-altLimits") != undefined)
+		{
+			altLimits = child.getAttribute("data-altLimits");
+		}
+		if(child.getAttribute("data-altFunction") != undefined)
+		{
+			altLimits = child.getAttribute("data-altLimits");
+		}
+		myAltSet.setAltLimits(altLimits.split('|'));
+		myAltSet.attachToContainer(parent);	
+		if(child.getAttribute("data-altFunction") != undefined)
+		{
+			altFunction = Function('x','y',child.getAttribute("data-altFunction"));
+			myAltSet.chooserFunction = altFunction;
+		}
+		for(var a in child.style)
+		{
+			myAltSet.view.style[a] = child.style[a];
+		}
+		return myAltSet;
+	}
+	else if(objType == "alt")
+	{
+		var myParent = child.parentNode;
+		if(myParent != null)
+		{
+			var parChilds = myParent.children;
+			var rank = -1;
+			for(var i = 0; i < parChilds.length ; i++)
+			{
+				if(child  == parChilds[i])
+				{
+					rank = i;
+					break;
+				}
+			}
+			if(rank != -1)
+			{
+				//alert(rank);
 				parent.setContent(rank,child.innerHTML);
 			}
 		}
@@ -144,6 +198,8 @@ function parseContainer(parent, child)
 		priority = Number(child.getAttribute("data-priority"));
 	}
 			
+
+
 	/* build containers */
 
 	var newCont = null;
@@ -162,6 +218,26 @@ function parseContainer(parent, child)
 	}
 	if((newCont!=null)&&(parent != null))
 	{
+
+
+		if(child.getAttribute("data-xFunction") != undefined)
+		{
+			newCont.xFunction = Function('x','y',child.getAttribute("data-xFunction"));
+		}
+		if(child.getAttribute("data-xFunction") != undefined)
+		{
+			newCont.yFunction = Function('x','y',child.getAttribute("data-yFunction"));
+		}
+		if(child.getAttribute("data-elxFunction") != undefined)
+		{
+			newCont.elxFunction = Function('x','y',child.getAttribute("data-elxFunction"));
+		}
+			if(child.getAttribute("data-elyFunction") != undefined)
+		{
+			newCont.elyFunction = Function('x','y',child.getAttribute("data-elyFunction"));
+		}
+
+
 		for(var a in child.style)
 		{
 			newCont.view.style[a] = child.style[a];
@@ -243,5 +319,6 @@ function onLoad()
 	{
 		root = parse(null,rootContainer,parseObject);
 	}
-	rootContainer.remove();
+	//rootContainer.remove();
+	document.body.removeChild(rootContainer);
 }
