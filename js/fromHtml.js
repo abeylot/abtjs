@@ -55,6 +55,51 @@ function parseTabSet(parent, child)
 	}
 }
 
+
+function parseAltSet(parent, child)
+{	
+	var altLimits;
+	var objType =  child.getAttribute("data-type");
+	if(objType == "altSet")
+	{
+		var myAltSet = new alternative();
+		if(child.getAttribute("data-altLimits") != undefined)
+		{
+			altLimits = child.getAttribute("data-altLimits");
+			myAltSet.setLimits(altLimits.split('|'));
+		}
+		myAltSet.attachToContainer(parent);	
+		for(var a in child.style)
+		{
+			myAltSet.view.style[a] = child.style[a];
+		}
+		return myAltSet;
+	}
+	else if(objType == "alt")
+	{
+		var myParent = child.parentNode;
+		if(myParent != null)
+		{
+			var parChilds = myParent.children;
+			var rank = -1;
+			for(var i = 0; i < parChilds.length ; i++)
+			{
+				if(child  == parChilds[i])
+				{
+					rank = i;
+					break;
+				}
+			}
+			if(rank != -1)
+			{
+				//alert(rank);
+				parent.setContent(rank,child.innerHTML);
+			}
+		}
+		return null;
+	}
+}
+
 // function parseContainer
 // parent : the abtjs parent container
 // child : the div to convert into abtjs container
@@ -148,6 +193,10 @@ function parseObject(parent,child)
 	else if (objType == "tabSet" || objType == "tab")
 	{
 		return parseTabSet(parent, child);
+	}
+	else if (objType == "altSet" || objType == "alt")
+	{
+		return parseAltSet(parent, child);
 	}
 	return null;
 
