@@ -5,24 +5,50 @@
 // data-type to abtjs objects.
 //---
 
+//dependencies check
+var abtjs_fromHtml = true;
+if(typeof abtjs_base == 'undefined') alert('base.js is needed before fromHtml.js');
+if(typeof abtjs_alt == 'undefined') alert('alt.js is needed before fromHtml.js');
+if(typeof abtjs_tab == 'undefined') alert('tab.js is needed before fromHtml.js');
+//
+
+
 // function parseContainer
 // parent : the abtjs parent container
 // child : the div to convert into abtjs tabSet
 // returns the new abtjs object
 
+abtjs.fillObjectProperty = function(object,child,tagName,varName,funcName)
+{
+	var myString = child.getAttribute(tagName)
+	if( myString != undefined)
+	{
+		if (myString.search('return') >= 0)
+		{
+			object['f_' + varName] = Function('x','y','obj','abtjs',myString);
+			//console.log('f_' + varName + ' is now : '+ object['f_' + varName]); 
+		}
+		else
+		{
+			var isNumber = !(isNaN(parseInt(myString)));
+			if(varName == 'altLimits') isNumber = false;
+			if (isNumber) object[varName] = Number(myString);
+			else object[varName] = myString;
+			console.log(varName + ' is now : '+ object[varName] + ' is integer ? ' + isNumber ); 
+		}
+	}
 
-function parseTabSet(parent, child)
+}
+
+abtjs.parseTabSet = function(parent, child)
 {	
 	var tabNames;
 	var objType =  child.getAttribute("data-type");
 	if(objType == "tabSet")
 	{
-		var myTabSet = new tabSet();
-		if(child.getAttribute("data-tabNames") != undefined)
-		{
-			tabNames = child.getAttribute("data-tabNames");
-		}
-		myTabSet.setTabNames(tabNames.split('|'));
+		var myTabSet = new abtjs.tabSet();
+		abtjs.fillObjectProperty(this,child,"data-tabNames","tabNames");
+		myTabSet.setTabNames(this.tabNames.split('|'));
 		myTabSet.attachToContainer(parent);	
 		for(var a in child.style)
 		{
@@ -47,7 +73,6 @@ function parseTabSet(parent, child)
 			}
 			if(rank != -1)
 			{
-				//alert(rank);
 				parent.setContent(rank,child.innerHTML);
 			}
 		}
@@ -56,28 +81,17 @@ function parseTabSet(parent, child)
 }
 
 
-function parseAltSet(parent, child)
+abtjs.parseAltSet = function(parent, child)
 {	
 	var altLimits;
 	var objType =  child.getAttribute("data-type");
 	if(objType == "altSet")
 	{
-		var myAltSet = new alternative();
-		if(child.getAttribute("data-altLimits") != undefined)
-		{
-			altLimits = child.getAttribute("data-altLimits");
-		}
-		if(child.getAttribute("data-altFunction") != undefined)
-		{
-			altLimits = child.getAttribute("data-altLimits");
-		}
-		myAltSet.setAltLimits(altLimits.split('|'));
+		var myAltSet = new abtjs.alternative();
+		abtjs.fillObjectProperty(myAltSet,child,"data-altLimits","altLimits");
+		abtjs.fillObjectProperty(myAltSet,child,"data-altFunction","compute");
+		myAltSet.setAltLimits();
 		myAltSet.attachToContainer(parent);	
-		if(child.getAttribute("data-altFunction") != undefined)
-		{
-			altFunction = Function('x','y',child.getAttribute("data-altFunction"));
-			myAltSet.chooserFunction = altFunction;
-		}
 		for(var a in child.style)
 		{
 			myAltSet.view.style[a] = child.style[a];
@@ -101,8 +115,7 @@ function parseAltSet(parent, child)
 			}
 			if(rank != -1)
 			{
-				//alert(rank);
-				parent.setContent(rank,child.innerHTML);
+				parent.setContent(rank,child.innerHTML,child.id,child.style);
 			}
 		}
 		return null;
@@ -114,7 +127,7 @@ function parseAltSet(parent, child)
 // child : the div to convert into abtjs container
 // returns the new abtjs object
 
-function parseContainer(parent, child)
+abtjs.parseContainer = function(parent, child)
 {
 	/* initialisations */
 	var disposition = "HORIZONTAL";
@@ -128,32 +141,6 @@ function parseContainer(parent, child)
 
 	var objType =  child.getAttribute("data-type");
 
-	if(child.getAttribute("data-disposition") != undefined)
-	{
-		disposition = child.getAttribute("data-disposition");
-	}
-	if(child.getAttribute("data-minXSize") != undefined)
-	{
-		minXSize = Number(child.getAttribute("data-minXSize"));
-	}
-	if(child.getAttribute("data-minYSize") != undefined)
-	{
-		minYSize = Number(child.getAttribute("data-minYSize"));
-	}
-	if(child.getAttribute("data-elastX") != undefined)
-	{
-		elastX = Number(child.getAttribute("data-elastX"));
-	}
-	if(child.getAttribute("data-elastY") != undefined)
-	{
-		elastY = Number(child.getAttribute("data-elastY"));
-	}
-	if(child.getAttribute("data-priority") != undefined)
-	{
-		priority = Number(child.getAttribute("data-priority"));
-	}
-			
-
 
 	/* build containers */
 
@@ -161,37 +148,27 @@ function parseContainer(parent, child)
 
 	if(objType == "rootContainer")
 	{
-		newCont = new rootContainer(disposition);
+		newCont = new abtjs.rootContainer(disposition);
 	}
 	if(objType == "finalContainer")
 	{
-		newCont = new finalContainer(disposition,minXSize,minYSize,elastX,elastY,priority);
+		newCont = new abtjs.finalContainer(disposition,minXSize,minYSize,elastX,elastY,priority);
 	}
 	if(objType == "container")
 	{
-		newCont = new container(disposition,minXSize,minYSize,elastX,elastY,priority);
+		newCont = new abtjs.container(disposition,minXSize,minYSize,elastX,elastY,priority);
+	}
+	if(newCont != null)
+	{
+		abtjs.fillObjectProperty(newCont,child,"data-disposition","disposition");
+		abtjs.fillObjectProperty(newCont,child,"data-minXSize","minXSize");
+		abtjs.fillObjectProperty(newCont,child,"data-minYSize","minYSize");
+		abtjs.fillObjectProperty(newCont,child,"data-elastX","elastX");
+		abtjs.fillObjectProperty(newCont,child,"data-elastY","elastY");
+		abtjs.fillObjectProperty(newCont,child,"data-priority","priority");
 	}
 	if((newCont!=null)&&(parent != null))
 	{
-
-
-		if(child.getAttribute("data-xFunction") != undefined)
-		{
-			newCont.xFunction = Function('x','y',child.getAttribute("data-xFunction"));
-		}
-		if(child.getAttribute("data-xFunction") != undefined)
-		{
-			newCont.yFunction = Function('x','y',child.getAttribute("data-yFunction"));
-		}
-		if(child.getAttribute("data-elxFunction") != undefined)
-		{
-			newCont.elxFunction = Function('x','y',child.getAttribute("data-elxFunction"));
-		}
-			if(child.getAttribute("data-elyFunction") != undefined)
-		{
-			newCont.elyFunction = Function('x','y',child.getAttribute("data-elyFunction"));
-		}
-
 
 		for(var a in child.style)
 		{
@@ -212,22 +189,22 @@ function parseContainer(parent, child)
 // child : the div to convert into abtjs object
 // returns the new abtjs object
  
-function parseObject(parent,child)
+abtjs.parseObject = function(parent,child)
 {
 
 	var objType =  child.getAttribute("data-type");
 	
 	if( (objType =="container") || (objType =="finalContainer") || (objType =="rootContainer") ) 
 	{
-		return parseContainer(parent, child);
+		return abtjs.parseContainer(parent, child);
 	}
 	else if (objType == "tabSet" || objType == "tab")
 	{
-		return parseTabSet(parent, child);
+		return abtjs.parseTabSet(parent, child);
 	}
 	else if (objType == "altSet" || objType == "alt")
 	{
-		return parseAltSet(parent, child);
+		return abtjs.parseAltSet(parent, child);
 	}
 	return null;
 
@@ -239,7 +216,7 @@ function parseObject(parent,child)
 // hook : callback function with the signature (parent, child)		
 // this function calls itself.
 		
-function parse(parent,child,hook)
+abtjs.parse = function(parent,child,hook)
 {
 	var prt = hook(parent,child);
 	var childs=child.childNodes;
@@ -248,7 +225,7 @@ function parse(parent,child,hook)
 		var obj = childs[j];
 		if(obj.nodeName == "DIV" && obj.getAttribute("data-type") != undefined) 
 		{
-			parse(prt,obj,hook);
+			abtjs.parse(prt,obj,hook);
 		}
 	}
 	return prt;  
@@ -258,8 +235,7 @@ function parse(parent,child,hook)
 
 // function onload
 // this is the main function to call it should be called on <body> onload event
-var root = null;
-function onLoad()
+abtjs.onLoad = function()
 {
 	var divs = document.body.getElementsByTagName('DIV');
 	var rootContainer = null;
@@ -272,7 +248,7 @@ function onLoad()
 	}
 	if(rootContainer != null)
 	{
-		root = parse(null,rootContainer,parseObject);
+		abtjs.root = abtjs.parse(null,rootContainer,abtjs.parseObject);
 	}
 	//rootContainer.remove();
 	document.body.removeChild(rootContainer);

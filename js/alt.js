@@ -1,4 +1,8 @@
-function alternative()
+//dependencies check
+var abtjs_alt = true;
+if(typeof abtjs_base == 'undefined') alert('base.js is needed before alt.js');
+//
+abtjs.alternative = function()
 {
 	this.isRoot=false;
 	this.flow=false;
@@ -22,7 +26,8 @@ function alternative()
 	
 	this.setAltLimits = function(myAltLimits)
 	{
-		this.altLimits = myAltLimits;
+		if(myAltLimits)  this.altLimits = myAltLimits;
+		this.altLimits = this.altLimits.split('|');
 		if(this.view != null)
 			this.view.innerHTML = this.buildHTML();
 		this.resize;
@@ -59,18 +64,25 @@ function alternative()
 	}
 	
 	
-	this.setContent = function(Alt,content)
+	this.setContent = function(Alt,content,id,style)
 	{
 		var c = document.createElement('DIV');
-		c.className = 'htmlContainer';
+		c.className = 'final';
+		c.id = id;
+		c.style = style;
+		for(var a in style)
+		{
+			c.style[a] = style[a];
+		}
+
 		c.innerHTML = content;
 		this.getAltAt(Alt).appendChild(c);
 	}
 	
-	this.setChooserFunction = function(f)
-	{
-		this.chooserFunction = f;
-	}
+//	this.setChooserFunction = function(f)
+//	{
+//		this.chooserFunction = f;
+//	}
 	
 		
 
@@ -84,7 +96,7 @@ function alternative()
 	//**************
 	this.iCur = 0;
 	this.view = null;
-	this.chooserFunction = function(x,y) {return x;}
+	this.f_compute = function(x,y,obj,abtjs) {return x;}
 
 	//*******************
 	//* PRIVATE METHODS *
@@ -147,26 +159,26 @@ function alternative()
 			if(y!=null) this.sizeY=y;
 			var style=getComputedStyle(this.view.parentElement); 
 			var myStyle=getComputedStyle(this.view); 
-			var deltax = getBorderSize(this,"left") + getBorderSize(this,"right");   
-			var deltay = getBorderSize(this,"top") + getBorderSize(this,"bottom");
+			var deltax = abtjs.getBorderSize(this,"left") + abtjs.getBorderSize(this,"right");   
+			var deltay = abtjs.getBorderSize(this,"top") + abtjs.getBorderSize(this,"bottom");
 
 			this.view.style.width = this.sizeX - deltax+'px';
 			this.view.style.height = this.sizeY - deltay+'px';
-			this.view.style.left = this.posx + getBorderSize(this.parent,"left") + "px";
-			this.view.style.top = this.posy + getBorderSize(this.parent,"top") + "px";
+			this.view.style.left = this.posx + abtjs.getBorderSize(this.parent,"left") + "px";
+			this.view.style.top = this.posy + abtjs.getBorderSize(this.parent,"top") + "px";
 
 			for( j=0; j < this.divs.length; j++)
 			{
 				if(this.divs[j].classList.contains('AltContent')||this.divs[j].classList.contains('AltContentSel'))
 				{
-					this.divs[j].style.width = this.sizeX - deltax  - getDirBorderSize(this.divs[j],"left") - getDirBorderSize(this.divs[j],"right") + "px";;
-					this.divs[j].style.height = this.sizeY  - deltay - getDirBorderSize(this.divs[j],"top") - getDirBorderSize(this.divs[j],"bottom") + 'px';
+					this.divs[j].style.width = this.sizeX - deltax  - abtjs.getDirBorderSize(this.divs[j],"left") - abtjs.getDirBorderSize(this.divs[j],"right") + "px";;
+					this.divs[j].style.height = this.sizeY  - deltay - abtjs.getDirBorderSize(this.divs[j],"top") - abtjs.getDirBorderSize(this.divs[j],"bottom") + 'px';
 				}
 			}
 			if(this.divs)
 			{
 				var i = 0;
-				var comp = this.chooserFunction(this.sizeX,this.sizeY);
+				var comp = this.f_compute(this.sizeX,this.sizeY,this,abtjs);
 				while((i < this.altLimits.length) && (parseInt(this.altLimits[i]) < comp))
 					i++;
 				if(i != this.currentAlt) this.setCurrent(i);

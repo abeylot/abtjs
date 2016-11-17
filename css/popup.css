@@ -9,4 +9,5 @@ div.popup
 	background-color:#FAFAFA;
 	padding:1em;
 	overflow:auto;
+	transition: left 1s;
 }

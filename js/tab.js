@@ -1,4 +1,9 @@
-function tabSet()
+//dependencies
+
+var abtjs_tab = {}
+if(typeof abtjs_base == 'undefined') alert('base.js is needed before tab.js');
+
+abtjs.tabSet = function()
 {
 	this.isRoot=false;
 	this.flow=false;
@@ -35,7 +40,6 @@ function tabSet()
 		container.appendChild(this);
 		this.divs = this.view.getElementsByTagName('DIV');
 		this.registerEvents();
-		//container.addEventListener('containerResize', this.onResize.bind(this));
 	}
 	
 
@@ -67,7 +71,7 @@ function tabSet()
 	this.setContent = function(tab,content)
 	{
 		var c = document.createElement('DIV');
-		c.className = 'htmlContainer';
+		c.className = 'final';
 		c.innerHTML = content;
 		this.getTabAt(tab).appendChild(c);
 	}
@@ -192,20 +196,20 @@ function tabSet()
 			}
 			var style=getComputedStyle(this.view.parentElement); 
 			var myStyle=getComputedStyle(this.view); 
-			var deltax = getBorderSize(this,"left") + getBorderSize(this,"right");   
-			var deltay = getBorderSize(this,"top") + getBorderSize(this,"bottom");
+			var deltax = getBorderSize(this,"left") + abtjs.getBorderSize(this,"right");   
+			var deltay = getBorderSize(this,"top") + abtjs.getBorderSize(this,"bottom");
 
 			this.view.style.width = this.sizeX - deltax+'px';
 			this.view.style.height = this.sizeY - deltay+'px';
-			this.view.style.left = this.posx + getBorderSize(this.parent,"left") + "px";
-			this.view.style.top = this.posy + getBorderSize(this.parent,"top") + "px";
+			this.view.style.left = this.posx + abtjs.getBorderSize(this.parent,"left") + "px";
+			this.view.style.top = this.posy + abtjs.getBorderSize(this.parent,"top") + "px";
 
 			for( j=0; j < this.divs.length; j++)
 			{
 				if(this.divs[j].classList.contains('tabContent')||this.divs[j].classList.contains('tabContentSel'))
 				{
-					this.divs[j].style.width = this.sizeX - deltax  - getDirBorderSize(this.divs[j],"left") - getDirBorderSize(this.divs[j],"right") + "px";;
-					this.divs[j].style.height = this.sizeY - h  - deltay - getDirBorderSize(this.divs[j],"top") - getDirBorderSize(this.divs[j],"bottom") + 'px';
+					this.divs[j].style.width = this.sizeX - deltax  - abtjs.getDirBorderSize(this.divs[j],"left") - abtjs.getDirBorderSize(this.divs[j],"right") + "px";;
+					this.divs[j].style.height = this.sizeY - h  - deltay - abtjs.getDirBorderSize(this.divs[j],"top") - abtjs.getDirBorderSize(this.divs[j],"bottom") + 'px';
 				}
 			}
 
