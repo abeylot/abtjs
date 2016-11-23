@@ -40,47 +40,6 @@ abtjs.fillObjectProperty = function(object,child,tagName,varName,funcName)
 
 }
 
-abtjs.parseTabSet = function(parent, child)
-{	
-	var tabNames;
-	var objType =  child.getAttribute("data-type");
-	if(objType == "tabSet")
-	{
-		var myTabSet = new abtjs.tabSet();
-		abtjs.fillObjectProperty(this,child,"data-tabNames","tabNames");
-		myTabSet.setTabNames(this.tabNames.split('|'));
-		myTabSet.attachToContainer(parent);	
-		for(var a in child.style)
-		{
-			myTabSet.view.style[a] = child.style[a];
-		}
-		return myTabSet;
-	}
-	else if(objType == "tab")
-	{
-		var myParent = child.parentNode;
-		if(myParent != null)
-		{
-			var parChilds = myParent.children;
-			var rank = -1;
-			for(var i = 0; i < parChilds.length ; i++)
-			{
-				if(child  == parChilds[i])
-				{
-					rank = i;
-					break;
-				}
-			}
-			if(rank != -1)
-			{
-				parent.setContent(rank,child.innerHTML);
-			}
-		}
-		return null;
-	}
-}
-
-
 abtjs.parseAltSet = function(parent, child)
 {	
 	var altLimits;
@@ -150,13 +109,20 @@ abtjs.parseContainer = function(parent, child)
 	{
 		newCont = new abtjs.rootContainer(disposition);
 	}
-	if(objType == "finalContainer")
-	{
-		newCont = new abtjs.finalContainer(disposition,minXSize,minYSize,elastX,elastY,priority);
-	}
 	if(objType == "container")
 	{
 		newCont = new abtjs.container(disposition,minXSize,minYSize,elastX,elastY,priority);
+	}
+	if(objType == "tabContainer")
+	{
+		newCont = new abtjs.tabContainer();
+	}
+	if(objType == "altContainer")
+	{
+		newCont = new abtjs.altContainer();
+		abtjs.fillObjectProperty(newCont,child,"data-altLimits","altLimits");
+		abtjs.fillObjectProperty(newCont,child,"data-altFunction","compute");
+		newCont.setAltLimits();
 	}
 	if(newCont != null)
 	{
@@ -175,9 +141,20 @@ abtjs.parseContainer = function(parent, child)
 			newCont.view.style[a] = child.style[a];
 		}
 		newCont.view.id = child.id;
-		if(objType == "finalContainer")
+		var divs = child.getElementsByTagName('DIV');
+		var hasChildren = false;
+		for(var i=0; i < divs.length ; i++)
+		{
+			if (
+				(divs[i].getAttribute("data-type") != '') && (divs[i].getAttribute("data-type") != null)
+			)
+			hasChildren = true;
+		}
+
+		if(! hasChildren)
 		{
 			newCont.view.innerHTML = child.innerHTML;
+			newCont.view.classList.add('final');
 		}
 		parent.appendChild(newCont);
 	}
@@ -194,13 +171,9 @@ abtjs.parseObject = function(parent,child)
 
 	var objType =  child.getAttribute("data-type");
 	
-	if( (objType =="container") || (objType =="finalContainer") || (objType =="rootContainer") ) 
+	if( (objType =="container") || (objType =="rootContainer") || (objType =="tabContainer") || (objType =="altContainer") ) 
 	{
 		return abtjs.parseContainer(parent, child);
-	}
-	else if (objType == "tabSet" || objType == "tab")
-	{
-		return abtjs.parseTabSet(parent, child);
 	}
 	else if (objType == "altSet" || objType == "alt")
 	{

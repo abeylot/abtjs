@@ -2,220 +2,136 @@
 
 var abtjs_tab = {}
 if(typeof abtjs_base == 'undefined') alert('base.js is needed before tab.js');
-
-abtjs.tabSet = function()
+/**********************************************************************/
+abtjs.tabContainer = function()
 {
-	this.isRoot=false;
-	this.flow=false;
-	this.sizeX=0;
-	this.sizeY=0;
-	this.minXSize = 0;
-	this.minYSize = 0;
-	this.elastX = 1;
-	this.elastY = 1;
-	this.priority = 0;
-	this.parent = null;
+	abtjs.container.call(this);
+	//this.view  = document.createElement('DIV');
+	this.headerView = document.createElement('DIV');
+	this.headerView.className = 'tabHeader';
+	this.contentView = document.createElement('DIV');
+	this.contentView.style.overflow = 'hidden';
+	this.headerFiller = document.createElement('DIV');
+	this.headerFiller.className = 'tabHeaderFiller';
+	this.headerView.appendChild(this.headerFiller);
+	this.view.appendChild(this.headerView);
+	this.view.appendChild(this.contentView);
+	
+	
+	//if(disposition == "HORIZONTAL")	this.view.className = 'container horizontal final';
+	//else this.view.className = 'container vertical final';
 
-	//******************
-	//* PUBLIC METHODS *
-	//******************
-	//
-	
-	//*
-	//* Set tab description 
-	//*
-	
-	this.setTabNames = function(myTabNames)
+	//method to append a container in this container
+	//myContainer : container to append
+	//rank : where to append, at the end if not defined
+	this.appendChild = function(myContainer, rank)
 	{
-		this.tabNames = myTabNames;
-		if(this.view != null)
-			this.view.innerHTML = this.buildHTML();
-	}
+		var isFinal =myContainer.view.classList.contains('final');
+		//alert(myContainer.view.className);
+		if(isFinal) myContainer.view.className = 'tabContent final';
+		else myContainer.view.className = 'tabContent';
 
+		var rank = typeof rank !== 'undefined' ? rank : null;
 
-	this.attachToContainer = function(container)
-	{
-		this.view = this.buildMe();
-		this.view.innerHTML =this.buildHTML();
-		container.appendChild(this);
-		this.divs = this.view.getElementsByTagName('DIV');
-		this.registerEvents();
-	}
-	
-
-	//*
-	//* delete self from document
-	//*
-	//this.destroy = function()
-	//{
-	//	this.parent.removeChild(this);
-	//}
-	
-	this.getTabAt = function(index)
-	{
-		var i=0;
-		for(var j=0; j < this.divs.length; j++)
-		{
-			if(this.divs[j].classList.contains('tabContent')||this.divs[j].classList.contains('tabContentSel'))
-			{
-				if( i == index )
-				{
-					return this.divs[j];
-				}
-				i++;
-			}
-		}
-	}
-	
-	
-	this.setContent = function(tab,content)
-	{
-		var c = document.createElement('DIV');
-		c.className = 'final';
-		c.innerHTML = content;
-		this.getTabAt(tab).appendChild(c);
-	}
+		var headerCell = document.createElement('DIV');
+		headerCell.className = 'tabHeaderCell';
+		headerCell.innerHTML = myContainer.view.id;
+		if(rank==null)
 		
-
-
-	//**************************
-	//* EVENTS                 *
-	//**************************
-
-	//**************
-	//* PROPERTIES *
-	//**************
-	this.iCur = 0;
-	this.view = null;
-	this.tabNames = null;
-
-	//*******************
-	//* PRIVATE METHODS *
-	//*******************
-	//
-	
-	this.setCurrent = function(index)
-	{
-		var i=0;
-		for(var j=0; j < this.divs.length; j++)
 		{
-			if(this.divs[j].classList.contains('tabHeaderCell')||this.divs[j].classList.contains('tabHeaderCellSel'))
-			{
-				if( i == index )
-				{
-					this.divs[j].classList.remove('tabHeaderCell');
-					this.divs[j].classList.add('tabHeaderCellSel');
-					this.currentTab = this.divs[j]; 
-				}else
-				{
-					this.divs[j].classList.add('tabHeaderCell');
-					this.divs[j].classList.remove('tabHeaderCellSel');
-				}
-				i++;
-			}
+			this.childrens[this.childrens.length] = myContainer;
+			this.contentView.appendChild(myContainer.view);
+			this.headerView.insertBefore(headerCell, this.headerFiller);
+			headerCell.addEventListener('click', this.setCurrentHeaderCell.bind(this,headerCell));
 		}
-		i=0;
-		for(var j=0; j < this.divs.length; j++)
+		else
 		{
-			if(this.divs[j].classList.contains('tabContent')||this.divs[j].classList.contains('tabContentSel'))
+			if(rank <= this.childrens.length)
 			{
-				if( i == index )
-				{
-					this.divs[j].classList.add('tabContentSel');
-					this.divs[j].classList.remove('tabContent');
-					this.currentTab = this.divs[j]; 
-				}else
-				{
-					this.divs[j].classList.add('tabContent');
-					this.divs[j].classList.remove('tabContentSel');
-				}
-				i++;
+				for (var i=this.childrens.length; i > rank; i--) this.childrens[i] = this.childrens[i-1];
+				this.childrens[rank] = myContainer;
+				this.contentView.insertBefore(myContainer.contentView, this.contentView.childNodes[rank]);
+				this.headerView.insertBefore(myContainer.headerView, this.headerView.childNodes[rank]);
 			}
 		}
 		this.resize();
 	}
 	
-	this.buildHTML = function()
+	
+	//method to resize childrens
+	this.computeChidrensSize = function()
 	{
-		var c = '';
-		c+='<div class="tabHeader">';
-		for(var i = 0; i < this.tabNames.length; i++)
+
+		var xSize = parseInt(window.getComputedStyle(this.contentView).width);
+		var ySize = parseInt(window.getComputedStyle(this.contentView).height);
+
+		for(var i=0; i < this.childrens.length; i++)
 		{
-			if(i!=(this.tabNames.length-1))
-				c+= '<div class = "tabHeaderCell">'+this.tabNames[i]+'</div>';
-			else
-				c+= '<div class = "tabHeaderCell" style="margin-right:0">'+this.tabNames[i]+'</div>';
+			this.childrens[i].posx  = 0;
+			this.childrens[i].posy  = parseInt(getComputedStyle(this.headerView).height);
+			this.childrens[i].sizeY = ySize - (abtjs.getBorderSize(this.childrens[i],"top") + abtjs.getBorderSize(this.childrens[i],"bottom"));
+			this.childrens[i].sizeX = xSize - (abtjs.getBorderSize(this.childrens[i],"left") + abtjs.getBorderSize(this.childrens[i],"right"));
+			this.childrens[i].resize();
 		}
-		c+=	'<div class = "tabHeaderFiller"></div></div>';
-		//c+=	'</div>';
-		for(var i = 0; i < this.tabNames.length; i++)
-		{
-			c+= '<div class = "tabContent"></div>';
-		}
-		return c;
+	}
+	
+	//method to resize this container
+	this.resize = function(x,y)
+	{
+		var h = parseInt(getComputedStyle(this.headerView).height);
+		if(this.sizeX > 0) this.view.style.width = this.sizeX + "px";
+		if(this.sizeY > 0) this.view.style.height = this.sizeY + "px";
+		if(this.sizeX > 0) this.contentView.style.width = this.sizeX  + "px";
+		if(this.sizeY > 0) this.contentView.style.height = this.sizeY -h + "px";
+		var error = false;
+		this.computeChidrensSize(false)
+		abtjs.itemDispatchEvent(this.view,"containerResize");
+		return error;
 	}
 
-
-	this.buildMe = function(myWidth, myHeight)
+	this.setCurrentHeaderCell = function(headerCell)
 	{
-		var elt = document.createElement("DIV");
-		elt.className = "tabContainer";
-		this.view=elt;
-		return elt;
-	}
-
-	this.registerEvents = function()
-	{
-		//alert('b');
-		var i = 0;
-		for(var j=0; j < this.divs.length; j++)
+		var divs = this.view.getElementsByTagName('DIV');
+		var i=0;
+		var index = -1;
+		for(var j=0; j < divs.length; j++)
 		{
-			if(this.divs[j].classList.contains('tabHeaderCell')||this.divs[j].classList.contains('tabHeaderCellSel'))
+			if(divs[j].classList.contains('tabHeaderCell')||divs[j].classList.contains('tabHeaderCellSel'))
 			{
-				this.divs[j].addEventListener('click', this.setCurrent.bind(this,i));
+				if( divs[j] == headerCell )
+				{
+					index = i;
+					divs[j].classList.remove('tabHeaderCell');
+					divs[j].classList.add('tabHeaderCellSel');
+					this.currentTab = divs[j]; 
+				}else
+				{
+					divs[j].classList.add('tabHeaderCell');
+					divs[j].classList.remove('tabHeaderCellSel');
+				}
 				i++;
 			}
 		}
-
-	}
-	
-	this.resize = function(x,y){
-		if(this.currentTab != null)
+		i=0;
+		for(var j=0; j < divs.length; j++)
 		{
-			var h = 0;
-			var x = typeof x !== 'undefined' ? x : null;
-			var y = typeof y !== 'undefined' ? y : null;
-			if(x!=null) this.sizeX=x;
-			if(y!=null) this.sizeY=y;
-			for(var j=0; j < this.divs.length; j++)
+			if(divs[j].classList.contains('tabContent')||divs[j].classList.contains('tabContentSel'))
 			{
-				if(this.divs[j].className == 'tabHeader')
+				if( i == index )
 				{
-					h = parseInt(getComputedStyle(this.divs[j]).height);
-				}
-			}
-			var style=getComputedStyle(this.view.parentElement); 
-			var myStyle=getComputedStyle(this.view); 
-			var deltax = getBorderSize(this,"left") + abtjs.getBorderSize(this,"right");   
-			var deltay = getBorderSize(this,"top") + abtjs.getBorderSize(this,"bottom");
-
-			this.view.style.width = this.sizeX - deltax+'px';
-			this.view.style.height = this.sizeY - deltay+'px';
-			this.view.style.left = this.posx + abtjs.getBorderSize(this.parent,"left") + "px";
-			this.view.style.top = this.posy + abtjs.getBorderSize(this.parent,"top") + "px";
-
-			for( j=0; j < this.divs.length; j++)
-			{
-				if(this.divs[j].classList.contains('tabContent')||this.divs[j].classList.contains('tabContentSel'))
+					divs[j].classList.add('tabContentSel');
+					divs[j].classList.remove('tabContent');
+					//this.currentTab = this.divs[j]; 
+				}else
 				{
-					this.divs[j].style.width = this.sizeX - deltax  - abtjs.getDirBorderSize(this.divs[j],"left") - abtjs.getDirBorderSize(this.divs[j],"right") + "px";;
-					this.divs[j].style.height = this.sizeY - h  - deltay - abtjs.getDirBorderSize(this.divs[j],"top") - abtjs.getDirBorderSize(this.divs[j],"bottom") + 'px';
+					divs[j].classList.add('tabContent');
+					divs[j].classList.remove('tabContentSel');
 				}
+				i++;
 			}
-
-
 		}
+		this.resize();
+
 	}
+
 }
-
-

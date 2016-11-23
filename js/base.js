@@ -129,6 +129,10 @@ abtjs.container = function(disposition, minXSize, minYSize, elastX, elastY, prio
 	//rank : where to append, at the end if not defined
 	this.appendChild = function(myContainer, rank)
 	{
+		//final class means no child
+		//if(disposition == "HORIZONTAL")	this.view.className = 'container horizontal';
+		//else this.view.className = 'container vertical';
+
 		var rank = typeof rank !== 'undefined' ? rank : null;
 
 		if(rank==null)
@@ -407,14 +411,4 @@ abtjs.rootContainer = function(disposition)
 }
 
 
-//class finalContainer
-//inherits from container
-abtjs.finalContainer = function(disposition, minXSize, minYSize, elastX, elastY, priority )
-{
-	abtjs.container.call(this,disposition, minXSize, minYSize, elastX, elastY, priority);
-	this.view.className='container horizontal final';
-	this.flow=false;
-	this.view.style.overflow="hidden";
-	document.body.style.overflow="hidden"
-}
 abtjs.root = {};
