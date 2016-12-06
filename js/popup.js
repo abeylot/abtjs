@@ -4,13 +4,14 @@ var abtjs_popup = true;
 
 abtjs.popup = function()
 {
+	abtjs.container.call(this);
 	this.shown = false;
-	this.view = document.createElement("DIV");
+	//this.view = document.createElement("DIV");
 	this.view.style.position = 'fixed';
 	this.view.style.top = 0;
 	this.view.style.left = 0;
 	this.view.className = 'popup';
-	this.view.innerHTML = "";
+	//this.view.innerHTML = "";
 
 	this.show = function()
 	{
@@ -57,7 +58,7 @@ abtjs.popup.call(this);
 			- abtjs.getBorderSize(this,"top") 
 			- abtjs.getBorderSize(this,"bottom") +'px';
 
-		this.view.style.maxWidth = window.innerWidth+'px';
+		this.view.style.maxWidth = window.innerWidth
 			- abtjs.getBorderSize(this,"left") 
 			- abtjs.getBorderSize(this,"right") +'px';
 		this.view.style.top = 0 + 'px';
@@ -73,7 +74,7 @@ abtjs.popup.call(this);
 	{
 		if(this.shown) return;
 		this.shown = true;
-		this.view.style.right = -100+'%';
+		this.view.style.right = 200+'%';
 		document.body.appendChild(this.view);
 		this.view.style.maxHeight = window.innerHeight 
 			- abtjs.getBorderSize(this,"top") 
@@ -83,7 +84,7 @@ abtjs.popup.call(this);
 			- abtjs.getBorderSize(this,"left") 
 			- abtjs.getBorderSize(this,"right") +'px';
 		this.view.style.top = 0 + 'px';
-		this.view.style.right = 0 + 'px';
+		this.view.style.right = 0 + '%';
 	}
 
 }

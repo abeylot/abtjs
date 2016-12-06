@@ -20,11 +20,12 @@
 	border-color: #888888;
 	border-radius: 7px 7px 0 0;
 	flex-shrink:1;
-	-webkit-flex-shrink:1;
 	}
 
 .tabHeaderFiller
 {
+	margin-right:-1px;
+	margin-top:-1px;
 	padding-left:10px;
 	padding-right:10px;
 	border-width: 0 0 1px 0;
@@ -36,12 +37,9 @@
 
 .tabHeaderCellSel
 {
-	#white-space: nowrap;
-	margin-right:-1px;
-	margin-top:-1px;
+	padding-left:10px;
+	padding-right:10px;
 	cursor:pointer;
-	padding-left:0.2em;
-	padding-right:0.2em;
 	background-color:#F0F0F0;
 	border-width: 1px 1px 0 1px;
 	border-style: solid solid none solid;

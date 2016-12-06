@@ -6,6 +6,7 @@ if(typeof abtjs_base == 'undefined') alert('base.js is needed before tab.js');
 abtjs.tabContainer = function()
 {
 	abtjs.container.call(this);
+	this.defaultTab = 0;
 	//this.view  = document.createElement('DIV');
 	this.headerView = document.createElement('DIV');
 	this.headerView.className = 'tabHeader';
@@ -28,8 +29,7 @@ abtjs.tabContainer = function()
 	{
 		var isFinal =myContainer.view.classList.contains('final');
 		//alert(myContainer.view.className);
-		if(isFinal) myContainer.view.className = 'tabContent final';
-		else myContainer.view.className = 'tabContent';
+		
 
 		var rank = typeof rank !== 'undefined' ? rank : null;
 
@@ -39,6 +39,7 @@ abtjs.tabContainer = function()
 		if(rank==null)
 		
 		{
+			rank = this.childrens.length;
 			this.childrens[this.childrens.length] = myContainer;
 			this.contentView.appendChild(myContainer.view);
 			this.headerView.insertBefore(headerCell, this.headerFiller);
@@ -54,6 +55,14 @@ abtjs.tabContainer = function()
 				this.headerView.insertBefore(myContainer.headerView, this.headerView.childNodes[rank]);
 			}
 		}
+
+		if(isFinal && (rank == this.defaultTab)) myContainer.view.className = 'tabContentSel final';
+		else if(rank == this.selectedTab) myContainer.view.className = 'tabContentSel';
+		else if(isFinal) myContainer.view.className = 'tabContent final';
+		else myContainer.view.className = 'tabContent';
+
+		if (rank == this.defaultTab) headerCell.className = 'tabHeaderCellSel';
+
 		this.resize();
 	}
 	
@@ -78,11 +87,19 @@ abtjs.tabContainer = function()
 	//method to resize this container
 	this.resize = function(x,y)
 	{
+		var x = typeof x !== 'undefined' ? x : null;
+		var y = typeof y !== 'undefined' ? y : null;
+		if(x!=null) this.sizeX=x;
+		if(y!=null) this.sizeY=y;
 		var h = parseInt(getComputedStyle(this.headerView).height);
 		if(this.sizeX > 0) this.view.style.width = this.sizeX + "px";
 		if(this.sizeY > 0) this.view.style.height = this.sizeY + "px";
 		if(this.sizeX > 0) this.contentView.style.width = this.sizeX  + "px";
 		if(this.sizeY > 0) this.contentView.style.height = this.sizeY -h + "px";
+
+		this.view.style.left = this.posx + abtjs.getBorderSize(this.parent,"left") + "px";
+		this.view.style.top = this.posy + abtjs.getBorderSize(this.parent,"top") + "px";
+
 		var error = false;
 		this.computeChidrensSize(false)
 		abtjs.itemDispatchEvent(this.view,"containerResize");

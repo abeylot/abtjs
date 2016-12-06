@@ -29,7 +29,7 @@ abtjs.getBorderSize = function(obj,dir)
 abtjs.getMmSize = function()
 {
 	var style = getComputedStyle(abtjs.sample);
-	return parseFloat(style.width);
+	return parseInt(style.width);
 }
 
 
@@ -54,6 +54,15 @@ abtjs.getDirBorderSize = function(obj,dir)
 		return parseInt(st.paddingRight) + parseInt(st.marginRight) + parseInt(st.borderRightWidth);
 	}
 	
+}
+
+abtjs.getFullHeight = function(obj)
+{
+	if(obj == null) return 0;
+	var st = window.getComputedStyle(obj);
+	return parseInt(st.paddingTop) + parseInt(st.marginTop)  + parseInt(st.borderTopWidth)
+			+ parseInt(st.paddingBottom) + parseInt(st.marginBottom) + parseInt(st.borderBottomWidth)
+			+ parseInt(st.height);
 }
 
 
@@ -149,6 +158,7 @@ abtjs.container = function(disposition, minXSize, minYSize, elastX, elastY, prio
 				this.view.insertBefore(myContainer.view, this.view.childNodes[rank]);
 			}
 		}
+		myContainer.parent = this;
 		this.resize();
 		
 	}
@@ -347,6 +357,7 @@ abtjs.container = function(disposition, minXSize, minYSize, elastX, elastY, prio
 			
 		this.view.style.left = this.posx + abtjs.getBorderSize(this.parent,"left") + "px";
 		this.view.style.top = this.posy + abtjs.getBorderSize(this.parent,"top") + "px";
+		//alert(abtjs.getBorderSize(this.parent,"top"));
 			
 		this.computeChidrensSize(false)
 
@@ -375,6 +386,8 @@ abtjs.rootContainer = function(disposition)
 	
 	this.resize = function()
 	{
+		if(disposition == "HORIZONTAL")	this.view.className = 'container horizontal';
+		else this.view.className = 'container vertical';
 		if((this.oldX == window.innerWidth) && (this.oldY == window.innerHeight))
 		{
 			this.resizing = false;
@@ -388,13 +401,13 @@ abtjs.rootContainer = function(disposition)
 							
 				var msize = window.innerWidth;
 				var fSize = Math.floor(msize/100);
-				var m = 12*abtjs.getMmSize()/3;
+				var m = 6*abtjs.getMmSize();
 				if (fSize < m) fSize = m;
 				document.body.style.fontSize = fSize+'px';
 
 		}else{
 			clearTimeout(this.resizing);
-			this.resizing = setTimeout(this.resize.bind(this),500);
+			this.resizing = setTimeout(this.resize.bind(this),1000);
 			this.computeChidrensSize(false);
 		}
 		this.oldX = window.innerWidth;

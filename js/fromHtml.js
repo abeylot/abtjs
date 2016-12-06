@@ -57,28 +57,28 @@ abtjs.parseAltSet = function(parent, child)
 		}
 		return myAltSet;
 	}
-	else if(objType == "alt")
-	{
-		var myParent = child.parentNode;
-		if(myParent != null)
-		{
-			var parChilds = myParent.children;
-			var rank = -1;
-			for(var i = 0; i < parChilds.length ; i++)
-			{
-				if(child  == parChilds[i])
-				{
-					rank = i;
-					break;
-				}
-			}
-			if(rank != -1)
-			{
-				parent.setContent(rank,child.innerHTML,child.id,child.style);
-			}
-		}
-		return null;
-	}
+//	else if(objType == "alt")
+//	{
+//		var myParent = child.parentNode;
+//		if(myParent != null)
+//		{
+//			var parChilds = myParent.children;
+//			var rank = -1;
+//			for(var i = 0; i < parChilds.length ; i++)
+//			{
+//				if(child  == parChilds[i])
+//				{
+//					rank = i;
+//					break;
+//				}
+//			}
+//			if(rank != -1)
+//			{
+//				parent.setContent(rank,child.innerHTML,child.id,child.style);
+//			}
+//		}
+//		return null;
+//	}
 }
 
 // function parseContainer
@@ -99,7 +99,7 @@ abtjs.parseContainer = function(parent, child)
 	/*fill variables from attribute*/
 
 	var objType =  child.getAttribute("data-type");
-
+	//alert ("parsecontainer "+objType);
 
 	/* build containers */
 
@@ -116,6 +116,7 @@ abtjs.parseContainer = function(parent, child)
 	if(objType == "tabContainer")
 	{
 		newCont = new abtjs.tabContainer();
+		abtjs.fillObjectProperty(newCont,child,"data-defaultTab","defaultTab");
 	}
 	if(objType == "altContainer")
 	{
@@ -170,15 +171,15 @@ abtjs.parseObject = function(parent,child)
 {
 
 	var objType =  child.getAttribute("data-type");
-	
+	//alert("---"+ objType);
 	if( (objType =="container") || (objType =="rootContainer") || (objType =="tabContainer") || (objType =="altContainer") ) 
 	{
 		return abtjs.parseContainer(parent, child);
 	}
-	else if (objType == "altSet" || objType == "alt")
-	{
-		return abtjs.parseAltSet(parent, child);
-	}
+	//else if (objType == "altSet" || objType == "alt")
+	//{
+	//	return abtjs.parseAltSet(parent, child);
+	//}
 	return null;
 
 }
@@ -198,6 +199,7 @@ abtjs.parse = function(parent,child,hook)
 		var obj = childs[j];
 		if(obj.nodeName == "DIV" && obj.getAttribute("data-type") != undefined) 
 		{
+			//alert(obj.getAttribute("id") + "----++" + obj.getAttribute("data-type"));
 			abtjs.parse(prt,obj,hook);
 		}
 	}
@@ -221,6 +223,7 @@ abtjs.onLoad = function()
 	}
 	if(rootContainer != null)
 	{
+		//abtjs.root = abtjs.parse(null,document.body,abtjs.parseObject);
 		abtjs.root = abtjs.parse(null,rootContainer,abtjs.parseObject);
 	}
 	//rootContainer.remove();
