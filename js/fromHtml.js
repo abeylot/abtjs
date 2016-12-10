@@ -108,6 +108,7 @@ abtjs.parseContainer = function(parent, child)
 	if(objType == "rootContainer")
 	{
 		newCont = new abtjs.rootContainer(disposition);
+		newCont.view.style.display = 'none';
 	}
 	if(objType == "container")
 	{
@@ -228,4 +229,5 @@ abtjs.onLoad = function()
 	}
 	//rootContainer.remove();
 	document.body.removeChild(rootContainer);
+	abtjs.root.view.style.display = 'block';
 }
