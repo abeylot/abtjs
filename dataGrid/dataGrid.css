@@ -1,0 +1,135 @@
+table.dataGrid
+{
+	background-color:#EEEEEE;
+	border-width: 0px;
+	border-style: none;
+	border-collapse:collapse;
+	font-size:12px;
+	margin:0px;padding:0px;
+}
+
+table.dataGrid tr.datagridHeader
+{
+  empty-cells: show;
+	margin:0px;padding:0px;
+	background-color:#AD1E22;
+	overflow:hidden;
+	text-overflow: ellipsis;
+	color:white;
+}
+
+div.BBB
+{
+	overflow:hidden;
+	text-overflow: ellipsis;
+}
+
+table.dataGrid tr
+{
+	display:-webkit-flex;
+	display:flex;
+}
+table.dataGrid tr.odd
+{
+	background-color:#FFFFFF;
+  empty-cells: show;
+	margin:0px;padding:0px;
+}
+table.dataGrid tr.even
+{
+	background-color:#F5F5F5;
+  empty-cells: show;
+}
+
+table.dataGrid tr.current
+{
+	background-color:#C3C3C3;
+	border:1px solid grey;
+  empty-cells: show;
+}
+
+table.dataGrid div.header,table.dataGrid div.BBB
+{
+	padding-top:0.25em;
+	padding-bottom:0.25em;
+}
+
+
+table.dataGrid th,table.dataGrid td
+{
+	display:-webkit-flex;
+	display:flex;
+	border-left-width: 1px;
+	border-right-width: 0px;
+	border-bottom-width: 1px;
+	border-top-width: 0px;
+	border-style: solid;
+	border-color: #FFCCCC;
+	text-align:center;
+	margin:0px;
+	/*height:1.5em;*/
+	padding-left:0px;
+	padding-right:0px;
+	padding-top:0em;
+	padding-bottom:0em;
+	overflow:hidden;
+	/*text-overflow: ellipsis;*/
+}
+
+
+table.dataGrid td
+{
+}
+
+table.dataGrid th
+{
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+	text-overflow: ellipsis;
+}
+
+
+div.dataGridContainer
+{
+	border-width:1px;
+	border-style: solid;
+	border-color: #CCCCFF;
+	opacity:0.8;
+	padding:0em;
+	box-shadow: 0.5em 0.5em 0.5em rgba(0,0,0,0.3);
+	font-size:0.75em;
+	background-color:#EEEEEE;
+}
+
+
+.clignote
+{
+	background-color : #EEEE00;
+}
+
+div.popup
+{
+	z-index:999;
+	white-space: nowrap;
+	box-shadow: 0.5em 0.5em 0.5em rgba(0,0,0,0.3);
+	border-radius: 5px;
+	border-width:1px;
+	border-style: solid;
+	border-color: #CCCCCC;
+	background-color:#FAFAFA;
+	opacity:0.8;
+	padding:1em;
+	overflow:auto;
+}
+
+div.search
+{
+	border-width:1px;
+	border-style: solid;
+	border-color: #CCCCFF;
+	opacity:0.8;
+	box-shadow: 0.5em 0.5em 0.5em rgba(0,0,0,0.3);
+	padding : 0.5em;
+}
