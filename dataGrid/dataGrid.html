@@ -1,0 +1,39 @@
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>DataGrid Sample</title>
+<link rel="stylesheet" href="dataGrid.css">
+<script src="dataGrid.js"></script>
+<script>
+		function loadDatas()
+		{
+			var row0 = [{lib:"Column1"},{lib:"Column2"},{lib:"Column3"}];
+			var cliData = [
+			['Value11','Value12','Value13'],
+			['Value21','Value22','Value23'],
+			['Value31','Value32','Value33'],
+			['Value41','Value42','Value43'],
+			['Value51','Value52','Value53'],
+			['Value61','Value62','Value63'],
+			['Value71','Value72','Value73'],
+			['Value81','Value82','Value83'],
+			['Value91','Value92','Value93'],
+			['Value01','Value02','Value03']
+			];
+			dg1 = new DataGrid();
+			dg1.setColumns(row0);
+			dg1.setData(cliData);
+			dg1.attachToContainer(document.getElementById('grid'));
+			var i=0;
+			dg1.view.addEventListener("selectionChanged",function(){selectionChanged(dg1)});
+		}
+	</script>
+
+</head>
+<body style="overflow:hidden">
+	<div id="grid" style="height:10em;width:70%;display:inline-block;z-index:20;;position:absolute;top:1em;left:3em;">
+<script>
+loadDatas();
+</script>
+</body>
+</html>

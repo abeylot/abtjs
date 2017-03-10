@@ -1,0 +1,298 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8"/>
+	<title>ABTJS Documentation</title>
+	<meta name="robots" content="index">
+	<meta name="description" content="Documentation of AbtJs Framework">
+	<meta name="keywords" lang="fr" content="Javascript Framework">
+	<meta name="reply-to" content="alain.beylot@free.fr">
+	<meta name="revisit-after" content="30 days">
+	<meta name="author" lang="fr" content="A. Beylot">
+	<meta name="expires" content="never">
+
+	<link href="css/base.css" rel="stylesheet" type="text/css"/>
+	<link href="css/alt.css" rel="stylesheet" type="text/css"/>
+	<link href="css/popup.css" rel="stylesheet" type="text/css"/>
+	<script type="text/javascript" src="js/base.js"></script>
+	<script type="text/javascript" src="js/alt.js"></script>
+	<script type="text/javascript" src="js/tab.js"></script>
+	<script type="text/javascript" src="js/fromHtml.js"></script>
+	<script type="text/javascript" src="js/popup.js"></script>
+	<script>
+	function buildSvgMenu()
+	{
+		var svgMenu =
+		 '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'
+		+'<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 90 90" id="svg2" version="1.1">'
+		+'<g id="layer1">'
+		+'<rect style="opacity:0.75;fill:#000060;fill-opacity:0.5;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0" id="rect1" width="90" height="10" x="0" y="0"  ry="5" />'
+		+'<rect style="opacity:0.75;fill:#000060;fill-opacity:0.5;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0" id="rect1" width="90" height="10" x="0" y="20" ry="5" />'
+		+'<rect style="opacity:0.75;fill:#000060;fill-opacity:0.5;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0" id="rect1" width="90" height="10" x="0" y="40" ry="5" />'
+		+'<rect style="opacity:0.75;fill:#000060;fill-opacity:0.5;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0" id="rect1" width="90" height="10" x="0" y="60" ry="5" />'
+		+'<rect style="opacity:0.75;fill:#000060;fill-opacity:0.5;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0" id="rect1" width="90" height="10" x="0" y="80" ry="5" />'
+		+'</g>'
+		+'</svg>';
+		s = 'data:image/svg+xml;base64,' + btoa(svgMenu);
+		document.getElementById('menuImage').src = s;
+	}
+
+	</script>
+	<style type="text/css">
+	
+	div.justify {
+	text-align:justify;
+	}
+	
+	a {
+	color:#332222;
+	 font-style:normal;
+	text-decoration:none;
+	}
+	
+	table {
+    border-collapse: collapse;
+	}
+	tr{
+		border: 1px solid white;
+	}
+	</style>
+</head>
+<body onload="
+				menuPopup = new abtjs.leftPopup();
+				abtjs.onLoad();
+				document.getElementById('A223').focus();
+				buildSvgMenu();
+				">
+	<div id="root" data-type="rootContainer"
+		data-disposition="VERTICAL"
+		data-minXSize="0"
+		data-minYSize="0"
+		data-elastX="1"
+		data-elastY="1"
+		data-priority="4"
+		style="background-color:#999977"
+	>
+		<div id="A1"
+			data-type="container"
+			data-disposition="HORIZONTAL"
+			data-minXSize="0"
+			data-minYSize="0"
+			data-elastX="1"
+			data-elastY="1"
+			data-priority="1"
+			style="background-color:#BBBBAA"
+		>
+		</div>
+		<div id="A2"
+			data-type="container"
+			data-disposition="HORIZONTAL"
+			data-minXSize="0"
+			data-minYSize="0"
+			data-elastX="100"
+			data-elastY="100"
+			data-priority="10"
+			style="background-color:#BBBBAA"
+		>
+			<div id="A21"
+				data-type="container"
+				data-disposition="VERTICAL"
+				data-minXSize="0"
+				data-minYSize="0"
+				data-elastX="1"
+				data-elastY="1"
+				data-priority="1"
+				style="background-color:#BBBBAA"
+			>
+			</div>
+			<div id="A22"
+				data-type="container"
+				data-disposition="HORIZONTAL"
+				data-minXSize="0"
+				data-minYSize="0"
+				data-elastX="100"
+				data-elastY="100"
+				data-priority="10"
+				style="background-color:#BBBBCC"
+			>
+
+				<div id="A221"
+					data-type="container"
+					data-disposition="VERTICAL"
+					data-minXSize = "return (x > y) ? abtjs.getMmSize()*60 : abtjs.getMmSize()*20;"
+					data-minYSize="1"
+					data-elastX = "return (x > y) ? 10 : 0;"
+					data-elastY="20"
+					data-priority="1"
+					style="background-color:#BBBBCC;overflow:visible;"
+				>
+					<div id="myAltSet"
+						data-type="altContainer"
+						data-altLimits="1"
+						data-altFunction="var res = (x == abtjs.getMmSize()*20)?0:2;return res;"
+						style="background-color:#BBBBAA"
+					>
+						<div id="tab1"
+							data-type="container"
+							style="padding:0.2em"
+						>
+							<img id="menuImage" onclick="menuPopup.setInnerHTML(document.getElementById('tab2').innerHTML);menuPopup.view.style.backgroundColor='#BBBBAA';menuPopup.view.style.opacity='0.9';menuPopup.show();" src="" style="width:80%" alt="en cours de chargement">
+						</div>
+						<div id="tab2"
+							data-type="container">
+							<div onclick="menuPopup.hide()" style="max-width:15em">
+								<div><a href="index.html">Main Page</a></div>
+								<div><a href="containers.html">Containers</a></div>
+								<div><a href="tabset.html">Tabset</a></div>
+								<div><a href="datagrid.html">DataGrid</a></div>
+							</div> 
+						</div>
+					</div> 
+				</div>
+			<div id="A223"
+				data-type="container"
+				data-disposition="VERTICAL"
+				data-minXSize="1"
+				data-minYSize="1"
+				data-elastX="100"
+				data-elastY="100"
+				data-priority="1"
+				style="background-color:#AAAABB;padding:1em"
+			>
+				<div style="padding:1em;width:800;max-width:84%;margin-left:auto;margin-right:auto;display:block" class="justify">
+					<h1>Purpose</h1>
+					The purpose of containers items is to design a flexible layout for web pages.<br/>
+					You first create a root container and then include other containers in it.
+					<br/>
+					<h1>Example</h1>
+					<img src="html/containers.png" style="width:70%"/>
+					<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;meta charset="UTF-8"&gt;
+	&lt;link href="abtjs/css/base.css" rel="stylesheet" type="text/css"&gt;
+	&lt;script type="text/javascript" src="abtjs/js/base.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="abtjs/js/alt.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="abtjs/js/tab.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="abtjs/js/fromHtml.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body onload="abtjs.onLoad()"&gt;
+	&lt;div id="root" data-type="rootContainer"
+		data-disposition="VERTICAL"
+		data-minXSize="0"
+		data-minYSize="0"
+		data-elastX="1"
+		data-elastY="1"
+		data-priority="4"
+		style="background-color:#BBBBFF"
+	&gt;
+		&lt;div id="H1"
+			data-type="container"
+			data-disposition="HORIZONTAL"
+			data-minXSize="100"
+			data-minYSize="100"
+			data-elastX="0"
+			data-elastY="0"
+			data-priority="1"
+			style="background-color:#FFBBBB"
+		&gt;
+			Content for container H1
+		&lt;/div&gt;
+		&lt;div id="H2"
+			data-type="container"
+			data-disposition="HORIZONTAL"
+			data-minXSize="100"
+			data-minYSize="100"
+			data-elastX="1"
+			data-elastY="1"
+			data-priority="2"
+			style="background-color:#BBFFBB"
+		&gt;
+			&lt;div id="H3"
+				data-type="container"
+				data-disposition="HORIZONTAL"
+				data-minXSize="400"
+				data-minYSize="400"
+				data-elastX="1"
+				data-elastY="0"
+				data-priority="1"
+				style="background-color:#FFBBFF"
+			&gt;
+			Content for container H3
+			&lt;/div&gt;
+			&lt;div id="H4"
+				data-type="container"
+				data-disposition="HORIZONTAL"
+				data-minXSize="400"
+				data-minYSize="400"
+				data-elastX="2"
+				data-elastY="0"
+				data-priority="2"
+				style="background-color:#FFFFBB"
+			&gt;
+				Content for container H4
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;	
+					</pre> 
+					<h1>Explanation</h1>
+					<h2>Inclusion of js and css files</h2>
+					Notice <b>script</b> and <b>style</b> tags ththat you need to put in the head section of HTML document.
+					<h2>create containers as div</h2>
+					the container are created as <b>div</b> tags with datatype="container" or datatype
+					<h2>Set containers properties</h2>
+					<h2>Call transformation</h2>
+					<h2>Container properties reference :</h2>
+					<table>
+						<tr><th>Attribute</th><th>Description</th></tr>
+						<tr><td>data-type</td><td>Values : <code>container</code> or <code>rootContainer</code> div with rootContainer attribute shall be the only one in document's body.</td></tr>
+						<tr><td>data-disposition</td><td>Values : <code>HORIZONTAL</code> or <code>VERTICAL</code> nested containers are arranged according to this attribute</td></tr>
+						<tr><td>data-minXSize</td><td>minimum width in pixels, if it's not enough place, container will disappear</td></tr>
+						<tr><td>data-minYSize</td><td>minimum height in pixels, if ther is not enough space, container will disappear</td></tr>
+						<tr><td>data-elastX</td><td>Width expands according to this value, the more the value, the more it grows when space is available.</td></tr>
+						<tr><td>data-elastY</td><td>Height expands according to this value, the more the value, the more it grows when space is available.</td></tr>
+						<tr><td>data-priority</td><td>containers are hidden according to this priority when space is missing.</td></tr>
+					</table>
+					Attributes can also be linked to javascript code like this :
+					data-disposition="if(x>y) return 'HORIZONTAL'; else return 'VERTICAL';".<br/>
+					You have acces to :<br/>
+					x : the width of parent container;
+					y : the height of parent container;
+					obj : this container;
+					abtjs : the main abtjs object(for future use);
+					
+					calculation will occur at each parent container resize.
+				</div>
+			</div>
+			</div>
+			<div id="A23"
+				data-type="container"
+				data-disposition="VERTICAL"
+				data-minXSize="0"
+				data-minYSize="0"
+				data-elastX="1"
+				data-elastY="1"
+				data-priority="1"
+				style="background-color:#BBBBAA"
+			>
+			</div>
+
+		</div>
+		<div id="A3"
+			data-type="container"
+			data-disposition="HORIZONTAL"
+			data-minXSize="0"
+			data-minYSize="0"
+			data-elastX="1"
+			data-elastY="1"
+			data-priority="1"
+			style="background-color:#BBBBAA"
+		>
+		</div>
+	</div>
+</body>
+</html>

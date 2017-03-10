@@ -4,7 +4,14 @@
 // this files contains basic container classes
 //---
 
-function itemDispatchEvent(item,eventName,eventData)
+//dependencies check
+var abtjs_base = true;
+//
+
+
+var abtjs = {};
+
+abtjs.itemDispatchEvent = function (item,eventName,eventData)
 {
 	var evt = document.createEvent('Event');
 	evt.initEvent(eventName,false,true);
@@ -13,14 +20,20 @@ function itemDispatchEvent(item,eventName,eventData)
 	item.dispatchEvent(evt);
 }
 
-function getBorderSize(obj,dir)
+abtjs.getBorderSize = function(obj,dir)
 {
 		if(obj == null) return 0;
-		return getDirBorderSize(obj.view,dir);
+		return abtjs.getDirBorderSize(obj.view,dir);
+}
+
+abtjs.getMmSize = function()
+{
+	var style = getComputedStyle(abtjs.sample);
+	return parseInt(style.width);
 }
 
 
-function getDirBorderSize(obj,dir)
+abtjs.getDirBorderSize = function(obj,dir)
 {
 	if(obj == null) return 0;
 	var st = window.getComputedStyle(obj);
@@ -43,11 +56,21 @@ function getDirBorderSize(obj,dir)
 	
 }
 
+abtjs.getFullHeight = function(obj)
+{
+	if(obj == null) return 0;
+	var st = window.getComputedStyle(obj);
+	return parseInt(st.paddingTop) + parseInt(st.marginTop)  + parseInt(st.borderTopWidth)
+			+ parseInt(st.paddingBottom) + parseInt(st.marginBottom) + parseInt(st.borderBottomWidth)
+			+ parseInt(st.height);
+}
+
 
 // class container
 
-function container(disposition, minXSize, minYSize, elastX, elastY, priority )
-{
+abtjs.container = function(disposition, minXSize, minYSize, elastX, elastY, priority )
+{	
+	getRoot = function(){return abtjs.root;}
 	var disposition = typeof disposition !== 'undefined' ? disposition : "HORIZONTAL";
 	var minXSize = typeof minXSize !== 'undefined' ? minXSize : 0;
 	var minYSize = typeof minYSize !== 'undefined' ? minYSize : 0;
@@ -115,6 +138,10 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 	//rank : where to append, at the end if not defined
 	this.appendChild = function(myContainer, rank)
 	{
+		//final class means no child
+		//if(disposition == "HORIZONTAL")	this.view.className = 'container horizontal';
+		//else this.view.className = 'container vertical';
+
 		var rank = typeof rank !== 'undefined' ? rank : null;
 
 		if(rank==null)
@@ -131,6 +158,7 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 				this.view.insertBefore(myContainer.view, this.view.childNodes[rank]);
 			}
 		}
+		myContainer.parent = this;
 		this.resize();
 		
 	}
@@ -155,24 +183,29 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 			obj.priority = this.childrens[i].priority;
 			this.childrensTmp[i] = obj;
 
-			if(typeof child.xFunction === 'function')
+			if(typeof child.f_minXSize === 'function')
 			{
-				child.minXSize = child.xFunction(xSize,ySize);
+				child.minXSize = child.f_minXSize(xSize,ySize,this,abtjs);
 			}
 
-			if(typeof child.yFunction === 'function')
+			if(typeof child.f_minYSize === 'function')
 			{
-				child.minYSize = child.yFunction(xSize,ySize);
+				child.minYSize = child.f_minYSize(xSize,ySize,this,abtjs);
 			}
 
-			if(typeof child.elxFunction === 'function')
+			if(typeof child.f_elastX === 'function')
 			{
-				child.elastX = child.elxFunction(xSize,ySize);
+				child.elastX = child.f_elastX(xSize,ySize,this,abtjs);
 			}
 
-			if(typeof child.elyFunction === 'function')
+			if(typeof child.f_elastY === 'function')
 			{
-				child.elastY = child.elyFunction(xSize,ySize);
+				child.elastY = child.f_elastY(xSize,ySize,this,abtjs);
+			}
+
+			if(typeof child.f_disposition === 'function')
+			{
+				child.disposition = child.f_disposition(xSize,ySize,this,abtjs);
 			}
 		}
 		this.childrensTmp.sort(function(a,b){return (a.priority - b.priority)});
@@ -206,14 +239,18 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 					if(this.disposition == "HORIZONTAL")
 					{
 						var szx=0;
-						szx = this.childrens[this.childrensTmp[i].index].minXSize + getBorderSize(this.childrens[this.childrensTmp[i].index],"left") + getBorderSize(this.childrens[this.childrensTmp[i].index],"right") ;
+						szx = this.childrens[this.childrensTmp[i].index].minXSize +
+						      abtjs.getBorderSize(this.childrens[this.childrensTmp[i].index],"left") +
+						      abtjs.getBorderSize(this.childrens[this.childrensTmp[i].index],"right") ;
 						minSz += szx;
 						elast += this.childrens[this.childrensTmp[i].index].elastX;
 					}
 					else
 					{
 						var szy=0;
-						szy = this.childrens[this.childrensTmp[i].index].minYSize + getBorderSize(this.childrens[this.childrensTmp[i].index],"top") + getBorderSize(this.childrens[this.childrensTmp[i].index],"bottom") ;
+						szy = this.childrens[this.childrensTmp[i].index].minYSize +
+						      abtjs.getBorderSize(this.childrens[this.childrensTmp[i].index],"top") +
+						      abtjs.getBorderSize(this.childrens[this.childrensTmp[i].index],"bottom") ;
 						minSz += szy;
 						elast += this.childrens[this.childrensTmp[i].index].elastY;
 					}
@@ -227,16 +264,15 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 				var somethingDone = false;
 				for(var i= this.childrensTmp.length -1 ; i >=0 ; i--)
 				{
-					if((this.childrensTmp[i].shown)/*&&(this.childrensTmp[i].priority > 0)*/)
+					if(this.childrensTmp[i].shown)
 					{
-						/*somethingDone = true;*/
 						this.childrensTmp[i].shown = false;
 						break;	
 					} 
 				}
 			}
 		}
-		while((minSz > size)/*&&somethingDone*/)
+		while(minSz > size)
 		
 		//
 		//	Dispatch remaining space
@@ -258,11 +294,8 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 				{
 					if(this.disposition == "HORIZONTAL")
 					{
-						//if(!(this.childrens[j].priority == 0)|| !(fixedP0) )
-						//{
-							if(this.childrens[j].flow) this.childrens[j].sizeY = -1;
-							else  this.childrens[j].sizeY = this.sizeY - (getBorderSize(this.childrens[j],"top") + getBorderSize(this.childrens[j],"bottom"));
-						//}
+						if(this.childrens[j].flow) this.childrens[j].sizeY = -1;
+						else  this.childrens[j].sizeY = this.sizeY - (abtjs.getBorderSize(this.childrens[j],"top") + abtjs.getBorderSize(this.childrens[j],"bottom"));
 						this.childrens[j].sizeX = this.childrens[j].minXSize;
 						if(this.childrens[j].elastX > 0)
 						{
@@ -276,16 +309,13 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 							this.childrens[j].posy = 0;
 						}  
 						this.childrens[j].posx = pos;
-						pos+=this.childrens[j].sizeX + getBorderSize(this.childrens[j],"left") + getBorderSize(this.childrens[j],"right") ;
+						pos+=this.childrens[j].sizeX + abtjs.getBorderSize(this.childrens[j],"left") + abtjs.getBorderSize(this.childrens[j],"right") ;
 					}
 					else
 					{
-						//if(!(this.childrens[j].priority == 0)|| !(fixedP0) )
-						//{
-							this.childrens[j].sizeY = this.childrens[j].minYSize;
-						//}
+						this.childrens[j].sizeY = this.childrens[j].minYSize;
 						if(this.childrens[j].flow) this.childrens[j].sizeX = -1;
-						else  this.childrens[j].sizeX = this.sizeX - (getBorderSize(this.childrens[j],"left") + getBorderSize(this.childrens[j],"right"));
+						else  this.childrens[j].sizeX = this.sizeX - (abtjs.getBorderSize(this.childrens[j],"left") + abtjs.getBorderSize(this.childrens[j],"right"));
 							this.childrens[j].posx = 0;
 						if(this.childrens[j].elastY > 0)
 						{
@@ -298,8 +328,7 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 							} 
 						}
 						this.childrens[j].posy = pos;
-						pos+=this.childrens[j].sizeY + getBorderSize(this.childrens[j],"top") + getBorderSize(this.childrens[j],"bottom") ;
-;
+						pos+=this.childrens[j].sizeY + abtjs.getBorderSize(this.childrens[j],"top") + abtjs.getBorderSize(this.childrens[j],"bottom") ;
 					}
 					this.childrens[j].view.style.display="inline-block";
 				}
@@ -326,12 +355,13 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 		if(this.sizeX > 0)this.view.style.width = this.sizeX + "px";
 		if(this.sizeY > 0) this.view.style.height = this.sizeY + "px";
 			
-		this.view.style.left = this.posx + getBorderSize(this.parent,"left") + "px";
-		this.view.style.top = this.posy + getBorderSize(this.parent,"top") + "px";
+		this.view.style.left = this.posx + abtjs.getBorderSize(this.parent,"left") + "px";
+		this.view.style.top = this.posy + abtjs.getBorderSize(this.parent,"top") + "px";
+		//alert(abtjs.getBorderSize(this.parent,"top"));
 			
 		this.computeChidrensSize(false)
 
-		itemDispatchEvent(this.view,"containerResize");
+		abtjs.itemDispatchEvent(this.view,"containerResize");
 		return error;
 	}
 
@@ -341,11 +371,11 @@ function container(disposition, minXSize, minYSize, elastX, elastY, priority )
 
 //class rootContainer
 //inherits from container
-function rootContainer(disposition)
+abtjs.rootContainer = function(disposition)
 {
 	this.oldX = 0;
 	this.oldY = 0;
-	container.call(this);
+	abtjs.container.call(this);
 	this.isRoot=true;
 	var disposition = typeof disposition !== 'undefined' ? disposition : "HORIZONTAL";
 	this.flow=false;
@@ -356,6 +386,8 @@ function rootContainer(disposition)
 	
 	this.resize = function()
 	{
+		if(disposition == "HORIZONTAL")	this.view.className = 'container horizontal';
+		else this.view.className = 'container vertical';
 		if((this.oldX == window.innerWidth) && (this.oldY == window.innerHeight))
 		{
 			this.resizing = false;
@@ -366,9 +398,16 @@ function rootContainer(disposition)
 			this.view.style.height = this.sizeY + "px";
 			this.view.style.width =  this.sizeX + "px";
 			this.computeChidrensSize(false);
+							
+				var msize = window.innerWidth;
+				var fSize = Math.floor(msize/100);
+				var m = 6*abtjs.getMmSize();
+				if (fSize < m) fSize = m;
+				document.body.style.fontSize = fSize+'px';
+
 		}else{
 			clearTimeout(this.resizing);
-			this.resizing = setTimeout(this.resize.bind(this),500);
+			this.resizing = setTimeout(this.resize.bind(this),1000);
 			this.computeChidrensSize(false);
 		}
 		this.oldX = window.innerWidth;
@@ -377,18 +416,12 @@ function rootContainer(disposition)
 
 	window.addEventListener('resize',this.resize.bind(this));
 	this.resizing = setTimeout(this.resize.bind(this),500);
+	var sample  = document.createElement('DIV');
+	sample.className = 'sample';
+	document.body.appendChild(sample);
+	abtjs.sample = sample;
+
 }
 
 
-//class finalContainer
-//inherits from container
-function finalContainer(disposition, minXSize, minYSize, elastX, elastY, priority )
-{
-	container.call(this,disposition, minXSize, minYSize, elastX, elastY, priority);
-	this.view.className='container horizontal final';
-	this.flow=false;
-	this.view.style.overflow="hidden";
-	document.body.style.overflow="hidden"
-}
-
-
+abtjs.root = {};

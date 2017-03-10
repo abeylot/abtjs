@@ -1,6 +1,6 @@
 div.popup
 {
-	white-space: nowrap;
+	position:absolute;
 	box-shadow: 0.5em 0.5em 0.5em rgba(0,0,0,0.3);
 	border-radius: 5px;
 	border-width:1px;
@@ -9,4 +9,5 @@ div.popup
 	background-color:#FAFAFA;
 	padding:1em;
 	overflow:auto;
+	transition: left 1s;
 }

@@ -1,178 +1,121 @@
-function alternative()
+//dependencies check
+var abtjs_alt = true;
+if(typeof abtjs_base == 'undefined') alert('base.js is needed before alt.js');
+//
+/**********************************************************************/
+abtjs.altContainer = function()
 {
-	this.isRoot=false;
-	this.flow=false;
-	this.sizeX=0;
-	this.sizeY=0;
-	this.minXSize = 0;
-	this.minYSize = 0;
-	this.elastX = 1;
-	this.elastY = 1;
-	this.priority = 0;
-	this.parent = null;
+	abtjs.container.call(this);
+	var elt = document.createElement("DIV");
+	this.view.className = "AltContainer";
+	this.currentAlt = -1;
+	this.appendChild = function(myContainer, rank)
+	{
+		console.log('New ALT!!!');
+		var isFinal =myContainer.view.classList.contains('final');
+		if(isFinal) myContainer.view.className = 'AltContent final';
+		else myContainer.view.className = 'AltContent';
 
-	//******************
-	//* PUBLIC METHODS *
-	//******************
-	//
-	
-	//*
-	//* Set aternatives limits 
-	//*
-	
-	this.setAltLimits = function(myAltLimits)
-	{
-		this.altLimits = myAltLimits;
-		if(this.view != null)
-			this.view.innerHTML = this.buildHTML();
-		this.resize;
-	}
+		var rank = typeof rank !== 'undefined' ? rank : null;
 
-	
-
-	this.attachToContainer = function(container)
-	{
-		this.view = this.buildMe();
-		this.view.innerHTML =this.buildHTML();
-		container.appendChild(this);
-		this.divs = this.view.getElementsByTagName('DIV');
-		this.registerEvents();
-		this.setCurrent(0);
-	}
-	
-
-	
-	this.getAltAt = function(index)
-	{
-		var i=0;
-		for(var j=0; j < this.divs.length; j++)
-		{
-			if(this.divs[j].classList.contains('AltContent')||this.divs[j].classList.contains('AltContentSel'))
-			{
-				if( i == index )
-				{
-					return this.divs[j];
-				}
-				i++;
-			}
-		}
-	}
-	
-	
-	this.setContent = function(Alt,content)
-	{
-		var c = document.createElement('DIV');
-		c.className = 'htmlContainer';
-		c.innerHTML = content;
-		this.getAltAt(Alt).appendChild(c);
-	}
-	
-	this.setChooserFunction = function(f)
-	{
-		this.chooserFunction = f;
-	}
-	
+		if(rank==null)
 		
-
-
-	//**************************
-	//* EVENTS                 *
-	//**************************
-
-	//**************
-	//* PROPERTIES *
-	//**************
-	this.iCur = 0;
-	this.view = null;
-	this.chooserFunction = function(x,y) {return x;}
-
-	//*******************
-	//* PRIVATE METHODS *
-	//*******************
-	//
-	
-	this.setCurrent = function(index)
-	{
-		var i=0;
-		for(var j=0; j < this.divs.length; j++)
 		{
-			if(this.divs[j].classList.contains('AltContent')||this.divs[j].classList.contains('AltContentSel'))
+			this.childrens[this.childrens.length] = myContainer;
+			this.view.appendChild(myContainer.view);
+			if(this.childrens.length == (1+this.currentAlt))
 			{
-				if( i == index )
-				{
-					this.divs[j].classList.add('AltContentSel');
-					this.divs[j].classList.remove('AltContent');
-					this.currentAlt = this.divs[j]; 
-				}else
-				{
-					this.divs[j].classList.add('AltContent');
-					this.divs[j].classList.remove('AltContentSel');
-				}
-				i++;
+				this.view.classList.remove('AltContent');
+				this.view.classList.remove('AltContentSel');
 			}
 		}
-		this.currentAlt = index;
+		else
+		{
+			if(rank <= this.childrens.length)
+			{
+				for (var i=this.childrens.length; i > rank; i--) this.childrens[i] = this.childrens[i-1];
+				this.childrens[rank] = myContainer;
+				this.view.insertBefore(myContainer.view, this.view.childNodes[rank]);
+			}
+		}
 		this.resize();
 	}
 	
-	this.buildHTML = function()
+	
+	//method to resize childrens
+	this.computeChidrensSize = function()
 	{
-		var c = '';
-		for(var i = 0; i < this.altLimits.length + 1; i++)
+
+		var xSize = parseInt(window.getComputedStyle(this.view).width);
+		var ySize = parseInt(window.getComputedStyle(this.view).height);
+
+		for(var i=0; i < this.childrens.length; i++)
 		{
-			c+= '<div class = "AltContent"></div>';
+			this.childrens[i].posx  = 0;
+			this.childrens[i].posy  = 0;
+			this.childrens[i].sizeY = ySize - (abtjs.getBorderSize(this.childrens[i],"top") + abtjs.getBorderSize(this.childrens[i],"bottom"));
+			this.childrens[i].sizeX = xSize - (abtjs.getBorderSize(this.childrens[i],"left") + abtjs.getBorderSize(this.childrens[i],"right"));
+			this.childrens[i].resize();
 		}
-		return c;
-	}
-
-
-	this.buildMe = function(myWidth, myHeight)
-	{
-		var elt = document.createElement("DIV");
-		elt.className = "AltContainer";
-		this.view=elt;
-		return elt;
-	}
-
-	this.registerEvents = function()
-	{
 	}
 	
-	this.resize = function(x,y){
-		if(this.currentAlt != null)
+	//method to resize this container
+	this.resize = function(x,y)
+	{
+		//var h = parseInt(getComputedStyle(this.headerView).height);
+		if(this.sizeX > 0) this.view.style.width = this.sizeX + "px";
+		if(this.sizeY > 0) this.view.style.height = this.sizeY + "px";
+
+		var i = 0;
+		var comp = this.f_compute(this.sizeX,this.sizeY,this,abtjs);
+		while((i < this.altLimits.length) && (parseInt(this.altLimits[i]) < comp))
 		{
-			var x = typeof x !== 'undefined' ? x : null;
-			var y = typeof y !== 'undefined' ? y : null;
-			if(x!=null) this.sizeX=x;
-			if(y!=null) this.sizeY=y;
-			var style=getComputedStyle(this.view.parentElement); 
-			var myStyle=getComputedStyle(this.view); 
-			var deltax = getBorderSize(this,"left") + getBorderSize(this,"right");   
-			var deltay = getBorderSize(this,"top") + getBorderSize(this,"bottom");
+			//console.log('alt:' + this.altLimits[i]);
+			i++;
+		}
+		console.log('current:' + this.currentAlt + '-' + i);
+		if(i != this.currentAlt) this.setCurrent(i);
+		//this.setCurrent(i);
 
-			this.view.style.width = this.sizeX - deltax+'px';
-			this.view.style.height = this.sizeY - deltay+'px';
-			this.view.style.left = this.posx + getBorderSize(this.parent,"left") + "px";
-			this.view.style.top = this.posy + getBorderSize(this.parent,"top") + "px";
+		this.computeChidrensSize(false)
+		abtjs.itemDispatchEvent(this.view,"containerResize");
+	}
 
-			for( j=0; j < this.divs.length; j++)
+	this.setAltLimits = function(myAltLimits)
+	{
+		if(myAltLimits)  this.altLimits = myAltLimits;
+		this.altLimits = this.altLimits.split('|');
+	}
+
+	this.f_compute = function(x,y,obj,abtjs) {return x;}
+
+	this.setCurrent = function(index)
+	{
+		console.log('cur is:' + index);
+		var i=0;
+		divs = this.view.getElementsByTagName('DIV');
+		console.log('cur is:' + index + 'divs:' + divs.length);
+		for(var j=0; j < divs.length; j++)
+		{
+			console.log('CLASS:' + divs[i].className);
+			if(divs[j].classList.contains('AltContent')||divs[j].classList.contains('AltContentSel'))
 			{
-				if(this.divs[j].classList.contains('AltContent')||this.divs[j].classList.contains('AltContentSel'))
+				if( i == index )
 				{
-					this.divs[j].style.width = this.sizeX - deltax  - getDirBorderSize(this.divs[j],"left") - getDirBorderSize(this.divs[j],"right") + "px";;
-					this.divs[j].style.height = this.sizeY  - deltay - getDirBorderSize(this.divs[j],"top") - getDirBorderSize(this.divs[j],"bottom") + 'px';
+					divs[j].classList.add('AltContentSel');
+					divs[j].classList.remove('AltContent');
+					this.currentAlt = index;
+					//this.currentAlt = this.divs[j]; 
+				}else
+				{
+					divs[j].classList.add('AltContent');
+					divs[j].classList.remove('AltContentSel');
 				}
 			}
-			if(this.divs)
-			{
-				var i = 0;
-				var comp = this.chooserFunction(this.sizeX,this.sizeY);
-				while((i < this.altLimits.length) && (parseInt(this.altLimits[i]) < comp))
-					i++;
-				if(i != this.currentAlt) this.setCurrent(i);
-			}
+			console.log('CLASS2:' + divs[i].className);
+			i++;
 		}
+		//this.currentAlt = index;
+		//this.resize();
 	}
 }
-
-
