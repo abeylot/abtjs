@@ -257,6 +257,15 @@
 						<tr><td>data-elastY</td><td>Height expands according to this value, the more the value, the more it grows when space is available.</td></tr>
 						<tr><td>data-priority</td><td>containers are hidden according to this priority when space is missing.</td></tr>
 					</table>
+					Attributes can also be linked to javascript code like this :
+					data-disposition="if(x>y) return 'HORIZONTAL'; else return 'VERTICAL';".<br/>
+					You have acces to :<br/>
+					x : the width of parent container;
+					y : the height of parent container;
+					obj : this container;
+					abtjs : the main abtjs object(for future use);
+					
+					calculation will occur at each parent container resize.
 				</div>
 			</div>
 			</div>
