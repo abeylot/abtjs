@@ -134,6 +134,7 @@ abtjs.parseContainer = function(parent, child)
 		abtjs.fillObjectProperty(newCont,child,"data-elastX","elastX");
 		abtjs.fillObjectProperty(newCont,child,"data-elastY","elastY");
 		abtjs.fillObjectProperty(newCont,child,"data-priority","priority");
+		abtjs.fillObjectProperty(newCont,child,"data-syncScroll","syncScroll");
 	}
 	if((newCont!=null)&&(parent != null))
 	{
@@ -157,6 +158,7 @@ abtjs.parseContainer = function(parent, child)
 		{
 			newCont.view.innerHTML = child.innerHTML;
 			newCont.view.classList.add('final');
+			newCont.final = true;
 		}
 		parent.appendChild(newCont);
 	}
