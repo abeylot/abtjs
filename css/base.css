@@ -5,6 +5,10 @@
 			padding:0px;
 			overflow:hidden;
 		}
+		div
+		{
+			-webkit-overflow-scrolling: touch;
+		}
 		.container
 		{
 			/*border: 1px solid red;*/
