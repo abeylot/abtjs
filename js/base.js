@@ -85,7 +85,7 @@ abtjs.container = function(disposition, minXSize, minYSize, elastX, elastY, prio
 	// if false container expands to its parent size
 	// vertically if parents disposition is horizontal
 	// horizontally otherwise 
-	this.flow=false;
+	this.syncScroll=false;
 
 	// container width
 	this.sizeX=0;
@@ -172,6 +172,8 @@ abtjs.container = function(disposition, minXSize, minYSize, elastX, elastY, prio
 		//fill childrensTmp array;
 		this.childrensTmp = [];
 		pos=0;
+		var syncScroll = false;
+		if (this.syncScroll == 'yes')  syncScroll = true;
 		for (var i=0; i < this.childrens.length; i++)
 		{
 			var child = this.childrens[i];
@@ -294,8 +296,8 @@ abtjs.container = function(disposition, minXSize, minYSize, elastX, elastY, prio
 				{
 					if(this.disposition == "HORIZONTAL")
 					{
-						if(this.childrens[j].flow) this.childrens[j].sizeY = -1;
-						else  this.childrens[j].sizeY = this.sizeY - (abtjs.getBorderSize(this.childrens[j],"top") + abtjs.getBorderSize(this.childrens[j],"bottom"));
+						if(syncScroll && ((this.childrens[j].final)||(this.childrens[j].disposition = this.disposition))) this.childrens[j].sizeY = -1;
+						else this.childrens[j].sizeY = this.sizeY - (abtjs.getBorderSize(this.childrens[j],"top") + abtjs.getBorderSize(this.childrens[j],"bottom"));
 						this.childrens[j].sizeX = this.childrens[j].minXSize;
 						if(this.childrens[j].elastX > 0)
 						{
@@ -314,7 +316,7 @@ abtjs.container = function(disposition, minXSize, minYSize, elastX, elastY, prio
 					else
 					{
 						this.childrens[j].sizeY = this.childrens[j].minYSize;
-						if(this.childrens[j].flow) this.childrens[j].sizeX = -1;
+						if(syncScroll && ((this.childrens[j].final)||(this.childrens[j].disposition = this.disposition))) this.childrens[j].sizeX = -1;
 						else  this.childrens[j].sizeX = this.sizeX - (abtjs.getBorderSize(this.childrens[j],"left") + abtjs.getBorderSize(this.childrens[j],"right"));
 							this.childrens[j].posx = 0;
 						if(this.childrens[j].elastY > 0)
@@ -352,8 +354,20 @@ abtjs.container = function(disposition, minXSize, minYSize, elastX, elastY, prio
 		if(x!=null) this.sizeX=x;
 		if(y!=null) this.sizeY=y;
 		
+		if (this.syncScroll)
+		{
+			if (this.disposition == 'HORIZONTAL')
+			{
+				this.view.style.overflowY = 'auto';
+			}else{
+				this.view.style.overflowX = 'auto';
+			}
+		}
+		
 		if(this.sizeX > 0)this.view.style.width = this.sizeX + "px";
+		else this.view.style.width = 'auto';
 		if(this.sizeY > 0) this.view.style.height = this.sizeY + "px";
+		else this.view.style.height = 'auto';
 			
 		this.view.style.left = this.posx + abtjs.getBorderSize(this.parent,"left") + "px";
 		this.view.style.top = this.posy + abtjs.getBorderSize(this.parent,"top") + "px";
@@ -388,6 +402,15 @@ abtjs.rootContainer = function(disposition)
 	{
 		if(disposition == "HORIZONTAL")	this.view.className = 'container horizontal';
 		else this.view.className = 'container vertical';
+		if (this.syncScroll)
+		{
+			if (this.disposition == 'HORIZONTAL')
+			{
+				this.view.style.overflowY = 'auto';
+			}else{
+				this.view.style.overflowX = 'auto';
+			}
+		}
 		if((this.oldX == window.innerWidth) && (this.oldY == window.innerHeight))
 		{
 			this.resizing = false;
