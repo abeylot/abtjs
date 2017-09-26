@@ -737,7 +737,7 @@ function scrollTo(inner,outer){
 		event.stopPropagation();
 	}
 
-	this.lineClicked = function(i,scroll = false)
+	this.lineClicked = function(i,scroll)
 	{
 		var cur;
 		this.iCur = i;

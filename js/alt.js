@@ -91,13 +91,10 @@ abtjs.altContainer = function()
 
 	this.setCurrent = function(index)
 	{
-		console.log('cur is:' + index);
 		var i=0;
 		divs = this.view.getElementsByTagName('DIV');
-		console.log('cur is:' + index + 'divs:' + divs.length);
 		for(var j=0; j < divs.length; j++)
 		{
-			console.log('CLASS:' + divs[i].className);
 			if(divs[j].classList.contains('AltContent')||divs[j].classList.contains('AltContentSel'))
 			{
 				if( i == index )
@@ -105,15 +102,16 @@ abtjs.altContainer = function()
 					divs[j].classList.add('AltContentSel');
 					divs[j].classList.remove('AltContent');
 					this.currentAlt = index;
-					//this.currentAlt = this.divs[j]; 
+					//this.currentAlt = this.divs[j];
+					abtjs.itemDispatchEvent(divs[j],"containerResize");
+
 				}else
 				{
 					divs[j].classList.add('AltContent');
 					divs[j].classList.remove('AltContentSel');
 				}
-			}
-			console.log('CLASS2:' + divs[i].className);
 			i++;
+			}
 		}
 		//this.currentAlt = index;
 		//this.resize();
