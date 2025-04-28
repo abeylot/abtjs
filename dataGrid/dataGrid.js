@@ -234,7 +234,7 @@ function scrollTo(inner,outer){
 	//
 	this.resizeListener = function()
 	{
-		this.resizeMe();
+        setTimeout(this.resizeMe.bind(this),2000);
 	}
 
 	this.startResize = function(i,evt)

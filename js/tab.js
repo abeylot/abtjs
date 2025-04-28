@@ -102,7 +102,7 @@ abtjs.tabContainer = function()
 
 		var error = false;
 		this.computeChidrensSize(false)
-		abtjs.itemDispatchEvent(this.view,"containerResize");
+		abtjs.itemDispatchEvent(this.contentView,"containerResize");
 		return error;
 	}
 
@@ -147,6 +147,7 @@ abtjs.tabContainer = function()
 				i++;
 			}
 		}
+		this.computeChidrensSize
 		this.resize();
 
 	}
