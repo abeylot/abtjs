@@ -147,9 +147,7 @@ abtjs.tabContainer = function()
 				i++;
 			}
 		}
-		this.computeChidrensSize
-		this.resize();
-
+		window.dispatchEvent(new Event('resize'));
 	}
 
 }
